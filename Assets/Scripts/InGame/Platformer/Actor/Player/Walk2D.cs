@@ -61,7 +61,7 @@ namespace yumehiko.Platformer
             groundChecker.Awake(body);
 
             //ボディに速度を適応する。
-            bodyObserver = Observable.EveryFixedUpdate().Subscribe(_ => UpdatePosition());
+            bodyObserver = Observable.EveryFixedUpdate().Subscribe(_ => UpdateVelocity());
 
             //初期状態で、重力加速度を最大値で当てはめておく。
             body.velocity = Physics2D.gravity;
@@ -137,7 +137,15 @@ namespace yumehiko.Platformer
             body.velocity = new Vector2(body.velocity.x, yVelocity);
         }
 
-        public void SetRiderVelocity(Vector2 velocity) => SetAdditionVelocity(velocity);　//new Vector2(velocity.x, 0.0f)
+        /// <summary>
+        /// 移動床によって速度を調整する。
+        /// </summary>
+        /// <param name="velocity"></param>
+        public void SetRiderVelocity(Vector2 velocity)
+        {
+            velocity.y = velocity.y > 0.0f ? 0.0f : velocity.y;
+            SetAdditionVelocity(velocity);
+        }
 
         /// <summary>
         /// 追加の加速度をセットする。
@@ -150,7 +158,7 @@ namespace yumehiko.Platformer
 
 
 
-        private void UpdatePosition()
+        private void UpdateVelocity()
         {
             body.velocity = new Vector2(onMove.Value, body.velocity.y) + AdditionVelocity;
         }
