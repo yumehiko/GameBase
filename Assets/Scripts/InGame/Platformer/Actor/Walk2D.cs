@@ -15,13 +15,14 @@ namespace yumehiko.Platformer
         public IObservable<Unit> OnFallWhileJump => onFallWhileJump;
         public ReadOnlyReactiveProperty<ActorDirection> BodyDirection => bodyDirection.ToReadOnlyReactiveProperty();
         public IGrounded Grounded => groundChecker;
-        public MovePlatformRider MovePlatformRider { get; } = new MovePlatformRider();
+        public MovePlatformRider MovePlatformRider => movePlatformRider;
 
 
         [SerializeField] private Rigidbody2D body;
         [SerializeField] private float speed;
         [SerializeField] private float jumpForce;
         [SerializeField] private GroundChecker groundChecker;
+        [SerializeField] private MovePlatformRider movePlatformRider;
         private FloatReactiveProperty onMove = new FloatReactiveProperty(0.0f);
         private Subject<Unit> onJump = new Subject<Unit>();
         private Subject<Unit> onFallWhileJump = new Subject<Unit>();
@@ -31,7 +32,7 @@ namespace yumehiko.Platformer
 
         public void Awake()
         {
-            groundChecker.Awake(body);
+            groundChecker.Awake();
 
             disposables = new CompositeDisposable();
 
@@ -119,6 +120,7 @@ namespace yumehiko.Platformer
 
         private void UpdateVelocity()
         {
+            //速度 ＝ （入力.X, 現在の速度.Y） + 動く床からの速度。
             body.velocity = new Vector2(onMove.Value, body.velocity.y) + MovePlatformRider.AdditionVelocity;
         }
     }

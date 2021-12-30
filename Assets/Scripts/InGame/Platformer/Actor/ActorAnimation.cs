@@ -8,6 +8,9 @@ using Spine.Unity;
 
 namespace yumehiko.Platformer
 {
+    /// <summary>
+    /// プラットフォーマーにおける、基本的なキャラクターアクションのアニメーション。
+    /// </summary>
     [Serializable]
     public class ActorAnimation : IDisposable
     {

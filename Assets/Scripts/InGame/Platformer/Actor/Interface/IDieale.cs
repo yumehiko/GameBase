@@ -10,7 +10,14 @@ namespace yumehiko
     /// </summary>
     public interface IDieable
     {
+        /// <summary>
+        /// 死亡したか。
+        /// </summary>
         ReadOnlyReactiveProperty<bool> IsDied { get; }
+
+        /// <summary>
+        /// 死亡する。
+        /// </summary>
         void Die();
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using UniRx.Triggers;
 using DG.Tweening;
 
 namespace yumehiko.Platformer
@@ -21,22 +22,40 @@ namespace yumehiko.Platformer
         [SerializeField] private float speed;
         [SerializeField] private List<Vector2> paths;
         private Vector2ReactiveProperty velocityToRider = new Vector2ReactiveProperty();
-
+        private ContactPoint2D[] contacts = new ContactPoint2D[4];
 
         private void Awake()
         {
             //指定したパスに沿って移動する。
             _ = body.DOLocalPath(paths.ToArray(), speed)
                 .SetOptions(true)
+                .SetUpdate(UpdateType.Fixed)
                 .SetEase(Ease.Linear)
                 .SetSpeedBased()
                 .SetLoops(-1, LoopType.Restart)
                 .OnWaypointChange(id => SetVelocityToRider(id))
                 .SetLink(gameObject);
+
+            //何かが触れたとき、それがライダーなら載せる。
+            _ = body.OnCollisionEnter2DAsObservable()
+                .Subscribe(collision => CheckRiderEnter(collision))
+                .AddTo(this);
+
+            //何かが離れたとき、それがライダーなら降ろす。
+            _ = body.OnCollisionExit2DAsObservable()
+                .Subscribe(collision => CheckRiderExit(collision))
+                .AddTo(this);
         }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+        private void CheckRiderEnter(Collision2D collision)
         {
+            collision.GetContacts(contacts);
+            bool onTheTop = contacts[0].point.y > transform.position.y;
+            if (!onTheTop)
+            {
+                return;
+            }
+
             IMovePlatformRider rider = collision.gameObject.GetComponent<IMovePlatformRider>();
             if (rider == null)
             {
@@ -45,7 +64,7 @@ namespace yumehiko.Platformer
             rider.Ride(this);
         }
 
-        private void OnCollisionExit2D(Collision2D collision)
+        private void CheckRiderExit(Collision2D collision)
         {
             IMovePlatformRider rider = collision.gameObject.GetComponent<IMovePlatformRider>();
             if (rider == null)

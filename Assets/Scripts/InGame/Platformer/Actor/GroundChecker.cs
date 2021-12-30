@@ -12,6 +12,7 @@ namespace yumehiko.Platformer
     [Serializable]
     public class GroundChecker : IGrounded, IDisposable
     {
+        [SerializeField] private Rigidbody2D body;
         [SerializeField] private Collider2D checkCollider;
         [SerializeField] private Collider2D footCollider;
 
@@ -32,7 +33,7 @@ namespace yumehiko.Platformer
 
 
 
-        public void Awake(Rigidbody2D body)
+        public void Awake()
         {
             disposables = new CompositeDisposable();
 

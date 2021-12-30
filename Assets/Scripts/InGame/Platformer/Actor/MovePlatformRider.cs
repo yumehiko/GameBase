@@ -7,11 +7,15 @@ namespace yumehiko.Platformer
     /// <summary>
     /// 動く床に乗って、動く床から受ける速度を保持する。
     /// </summary>
+    [Serializable]
     public class MovePlatformRider : IMovePlatformRider, IDisposable
     {
+        /// <summary>
+        /// 床から受ける速度。
+        /// </summary>
         public Vector2 AdditionVelocity { get; private set; }
 
-
+        [SerializeField] private Rigidbody2D body;
         private IDisposable platformObserver;
         private IMovePlatform ridingPlatform;
 
@@ -40,11 +44,10 @@ namespace yumehiko.Platformer
             platformObserver?.Dispose();
         }
 
-
         private void AdjustVelocity(Vector2 force)
         {
-            //Y軸は無視（単に乗っかる）。
-            force.y = 0.0f;
+            //Y軸のうち、上昇分は無視（跳ねまくるので）。
+            force.y = force.y > 0.0f ? 0.0f : force.y;
 
             AdditionVelocity = force;
         }
