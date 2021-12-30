@@ -30,6 +30,7 @@ namespace yumehiko.Platformer
                 .SetLink(gameObject);
         }
 
+        /*
         private void OnCollisionEnter2D(Collision2D collision)
         {
             IRideable rider = collision.gameObject.GetComponent<IRideable>();
@@ -37,12 +38,36 @@ namespace yumehiko.Platformer
             {
                 return;
             }
-
             rider.SetRiderVelocity(riderVelocity.Value);
             riders.Add(rider);
         }
 
         private void OnCollisionExit2D(Collision2D collision)
+        {
+            IRideable rider = collision.gameObject.GetComponent<IRideable>();
+            if (rider == null)
+            {
+                return;
+            }
+
+            rider.SetRiderVelocity(Vector2.zero);
+            riders.Remove(rider);
+        }
+        */
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            Debug.Log(collision.gameObject.name);
+            IRideable rider = collision.gameObject.GetComponent<IRideable>();
+            if (rider == null)
+            {
+                return;
+            }
+            rider.SetRiderVelocity(riderVelocity.Value);
+            riders.Add(rider);
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
         {
             IRideable rider = collision.gameObject.GetComponent<IRideable>();
             if (rider == null)

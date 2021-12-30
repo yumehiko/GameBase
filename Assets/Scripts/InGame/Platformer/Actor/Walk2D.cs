@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UniRx;
-using DG.Tweening;
 using System;
 
 namespace yumehiko.Platformer
@@ -13,55 +10,35 @@ namespace yumehiko.Platformer
     [Serializable]
     public class Walk2D : IMovable, IJumpable, IRideable, IDisposable
     {
-        /// <summary>
-        /// 歩いたとき。その速度。
-        /// </summary>
         public ReadOnlyReactiveProperty<float> OnMove => onMove.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// ジャンプしたとき。
-        /// </summary>
         public IObservable<Unit> OnJump => onJump;
-
-        /// <summary>
-        /// ジャンプした後、落下しはじめたとき。
-        /// </summary>
         public IObservable<Unit> OnFallWhileJump => onFallWhileJump;
-
-        /// <summary>
-        /// 体の向き。
-        /// </summary>
         public ReadOnlyReactiveProperty<ActorDirection> BodyDirection => bodyDirection.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// 加算される加速度。
-        /// </summary>
-        public Vector2 AdditionVelocity { get; private set; } = Vector2.zero;
-
         public IGrounded Grounded => groundChecker;
 
 
-
         [SerializeField] private Rigidbody2D body;
-        [SerializeField] private GroundChecker groundChecker;
         [SerializeField] private float speed;
         [SerializeField] private float jumpForce;
+        [SerializeField] private GroundChecker groundChecker;
+        private Vector2 additionVelocity = Vector2.zero;
         private FloatReactiveProperty onMove = new FloatReactiveProperty(0.0f);
         private Subject<Unit> onJump = new Subject<Unit>();
         private Subject<Unit> onFallWhileJump = new Subject<Unit>();
-
         private ReactiveProperty<ActorDirection> bodyDirection = new ReactiveProperty<ActorDirection>(ActorDirection.Right);
-
-        private IDisposable bodyObserver;
-
+        private CompositeDisposable disposables;
 
 
         public void Awake()
         {
             groundChecker.Awake(body);
 
+            disposables = new CompositeDisposable();
+
             //ボディに速度を適応する。
-            bodyObserver = Observable.EveryFixedUpdate().Subscribe(_ => UpdateVelocity());
+            _ = Observable.EveryFixedUpdate()
+                .Subscribe(_ => UpdateVelocity())
+                .AddTo(disposables);
 
             //初期状態で、重力加速度を最大値で当てはめておく。
             body.velocity = Physics2D.gravity;
@@ -70,7 +47,7 @@ namespace yumehiko.Platformer
         public void Dispose()
         {
             groundChecker.Dispose();
-            bodyObserver.Dispose();
+            disposables.Dispose();
         }
 
         /// <summary>
@@ -119,7 +96,8 @@ namespace yumehiko.Platformer
             _ = body.ObserveEveryValueChanged(_ => body.velocity.y)
                 .Where(yVelocity => yVelocity <= 0.0f)
                 .First()
-                .Subscribe(_ => onFallWhileJump.OnNext(Unit.Default));
+                .Subscribe(_ => onFallWhileJump.OnNext(Unit.Default))
+                .AddTo(disposables);
         }
 
         /// <summary>
@@ -153,14 +131,13 @@ namespace yumehiko.Platformer
         /// <param name="velocity"></param>
         public void SetAdditionVelocity(Vector2 velocity)
         {
-            AdditionVelocity = velocity;
+            additionVelocity = velocity;
         }
-
 
 
         private void UpdateVelocity()
         {
-            body.velocity = new Vector2(onMove.Value, body.velocity.y) + AdditionVelocity;
+            body.velocity = new Vector2(onMove.Value, body.velocity.y) + additionVelocity;
         }
     }
 }

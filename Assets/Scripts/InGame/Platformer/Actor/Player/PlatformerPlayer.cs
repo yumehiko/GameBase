@@ -1,10 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UniRx;
-using UniRx.Triggers;
-using Spine.Unity;
-using DG.Tweening;
 using yumehiko.Resident;
 using yumehiko.Resident.Control;
 
@@ -13,26 +8,21 @@ namespace yumehiko.Platformer
     /// <summary>
     /// プラットフォーマーゲームのプレイヤーキャラクター。
     /// </summary>
-    public class PlatformerPlayer : MonoBehaviour, IContorlable, IDieable, IPlayerAction, IRideable
+    public class PlatformerPlayer : MonoBehaviour, IContorlable, IDieable, IRideable
     {
         public ReadOnlyReactiveProperty<bool> IsDied => isDied.ToReadOnlyReactiveProperty();
-        public ReadOnlyReactiveProperty<bool> OnAction => onAction.ToReadOnlyReactiveProperty();
         public bool CanControl { get; private set; } = true;
 
         [SerializeField] private Walk2D walk;
         [SerializeField] private ActorAnimation actorAnimation;
-        [Space]
-
         private bool isInvisible = false;
         private BoolReactiveProperty isDied = new BoolReactiveProperty(false);
-        private BoolReactiveProperty onAction = new BoolReactiveProperty(false);
-
 
 
         private void Awake()
         {
             walk.Awake();
-            actorAnimation.Awake(this, walk, walk);
+            actorAnimation.Awake(this, walk, walk, walk.Grounded);
 
             SubscribeKeys();
 
@@ -49,15 +39,14 @@ namespace yumehiko.Platformer
         }
 
 
-
-        public void SetCanControl(bool isOn)
+        public void SetCanControl(bool canControl)
         {
             if (isDied.Value)
             {
                 return;
             }
 
-            CanControl = isOn;
+            CanControl = canControl;
             walk.Stop();
         }
 
@@ -79,7 +68,6 @@ namespace yumehiko.Platformer
         }
 
         public void SetRiderVelocity(Vector2 velocity) => walk.SetRiderVelocity(velocity);
-
 
 
         private void SubscribeKeys()
@@ -105,12 +93,6 @@ namespace yumehiko.Platformer
                 .Where(_ => ReactiveInput.OnMove.Value.y <= -0.9f)
                 .Where(isOn => isOn)
                 .Subscribe(_ => walk.Grounded.DownPlatform())
-                .AddTo(this);
-
-            ReactiveInput.OnMaru
-                .Where(_ => CanControl)
-                .Where(_ => !PauseManager.IsPause.Value)
-                .Subscribe(isOn => onAction.Value = isOn)
                 .AddTo(this);
 
             ReactiveInput.OnMove

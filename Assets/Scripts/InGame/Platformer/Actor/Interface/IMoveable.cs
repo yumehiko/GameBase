@@ -11,11 +11,26 @@ namespace yumehiko.Platformer
     /// </summary>
     public interface IMovable
     {
+        /// <summary>
+        /// 移動量が指定されたとき。その移動量。
+        /// </summary>
         ReadOnlyReactiveProperty<float> OnMove { get; }
-        ReadOnlyReactiveProperty<ActorDirection> BodyDirection { get; }
-        IGrounded Grounded { get; }
 
+        /// <summary>
+        /// 2Dにおける体の向き。
+        /// </summary>
+        ReadOnlyReactiveProperty<ActorDirection> BodyDirection { get; }
+
+        /// <summary>
+        /// 移動量を指定する。
+        /// </summary>
+        /// <param name="direction"></param>
         void Move(Vector2 direction);
+
+        /// <summary>
+        /// 停止する。
+        /// </summary>
+        /// <param name="yIsZero"></param>
         void Stop(bool yIsZero = false);
     }
 }

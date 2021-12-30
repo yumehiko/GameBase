@@ -11,18 +11,10 @@ namespace yumehiko.Platformer
     [System.Serializable]
     public class ActorSoundEffect
     {
-        private AudioSource audioSource;
-        private AudioClip deathClip;
-        private AudioClip jumpClip;
-        private List<AudioClip> footStepClips;
-
-        public ActorSoundEffect(AudioSource audioSource, AudioClip deathClip, AudioClip jumpClip, List<AudioClip> footStepClips)
-        {
-            this.audioSource = audioSource;
-            this.deathClip = deathClip;
-            this.jumpClip = jumpClip;
-            this.footStepClips = footStepClips;
-        }
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip deathClip;
+        [SerializeField] private AudioClip jumpClip;
+        [SerializeField] private List<AudioClip> footStepClips;
 
         public void Death()
         {

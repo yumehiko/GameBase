@@ -5141,7 +5141,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &313182060
 GameObject:
@@ -5487,7 +5487,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &444274978
 MonoBehaviour:
@@ -5782,22 +5782,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walk:
     body: {fileID: 1485761640}
+    speed: 5
+    jumpForce: 13.5
     groundChecker:
       checkCollider: {fileID: 2131966185}
       footCollider: {fileID: 313182062}
-    speed: 5
-    jumpForce: 13.5
   actorAnimation:
     visual: {fileID: 1905886614}
-    thiunParticle: {fileID: 138732034}
-    audioSource: {fileID: 1485761643}
-    deathClip: {fileID: 8300000, guid: fc860643150764aa78b664c3e262f9bf, type: 3}
-    jumpClip: {fileID: 8300000, guid: 7840e33d3a3c147aea93467059c49ccc, type: 3}
-    footStepClips:
-    - {fileID: 8300000, guid: ea0d74cc25f0c4a0c8b6407e0402b669, type: 3}
-    - {fileID: 8300000, guid: 8c65f3c221aa74f1a9f9c0cbd71a754c, type: 3}
-    - {fileID: 8300000, guid: 5816cb6c89660489c8d7e51bf8d2c314, type: 3}
-    - {fileID: 8300000, guid: 9c7867fe49e014b09abce5fe67592289, type: 3}
+    deathParticle: {fileID: 138732034}
+    soundEffect:
+      audioSource: {fileID: 1485761643}
+      deathClip: {fileID: 8300000, guid: fc860643150764aa78b664c3e262f9bf, type: 3}
+      jumpClip: {fileID: 8300000, guid: 7840e33d3a3c147aea93467059c49ccc, type: 3}
+      footStepClips:
+      - {fileID: 8300000, guid: ea0d74cc25f0c4a0c8b6407e0402b669, type: 3}
+      - {fileID: 8300000, guid: 8c65f3c221aa74f1a9f9c0cbd71a754c, type: 3}
+      - {fileID: 8300000, guid: 5816cb6c89660489c8d7e51bf8d2c314, type: 3}
+      - {fileID: 8300000, guid: 9c7867fe49e014b09abce5fe67592289, type: 3}
 --- !u!82 &1485761643
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6084,7 +6085,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1895762868
 BoxCollider2D:

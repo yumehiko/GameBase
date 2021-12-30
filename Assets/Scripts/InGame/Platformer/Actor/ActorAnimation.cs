@@ -12,26 +12,17 @@ namespace yumehiko.Platformer
     public class ActorAnimation : IDisposable
     {
         [SerializeField] private SkeletonAnimation visual;
-        [SerializeField] private ParticleSystem thiunParticle;
-        [Space]
-        [SerializeField] private AudioSource audioSource;
-        [SerializeField] private AudioClip deathClip;
-        [SerializeField] private AudioClip jumpClip;
-        [SerializeField] private List<AudioClip> footStepClips;
-
-        private ActorSoundEffect soundEffect;
+        [SerializeField] private ParticleSystem deathParticle;
+        [SerializeField] private ActorSoundEffect soundEffect;
         private IGrounded grounded;
         private Sequence groundedSequence;
         private CompositeDisposable disposables;
 
 
-
-        public void Awake(IDieable dieable, IMovable movable, IJumpable jumpable)
+        public void Awake(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded)
         {
-            soundEffect = new ActorSoundEffect(audioSource, deathClip, jumpClip, footStepClips);
-            grounded = movable.Grounded;
-            //SkeletonAnimationはAwakeのタイミングでは購読できないので、後に回す。
-            Observable.NextFrame().Subscribe(_ => SubscribeEvents(dieable, movable, jumpable));
+            //Spine.SkeletonAnimationはAwakeのタイミングでは購読できないので、1フレーム後に回す。
+            Observable.NextFrame().Subscribe(_ => SubscribeEvents(dieable, movable, jumpable, grounded));
         }
 
         public void Dispose()
@@ -41,9 +32,10 @@ namespace yumehiko.Platformer
         }
 
 
-
-        private void SubscribeEvents(IDieable dieable, IMovable movable, IJumpable jumpable)
+        private void SubscribeEvents(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded)
         {
+            this.grounded = grounded;
+
             disposables = new CompositeDisposable();
 
             //死亡時アニメーション。
@@ -89,7 +81,7 @@ namespace yumehiko.Platformer
 
         private void OnEvent(Spine.TrackEntry entry, Spine.Event e)
         {
-            switch(e.Data.Name)
+            switch (e.Data.Name)
             {
                 case "FootStep":
                     FootStepEvent();
@@ -137,7 +129,7 @@ namespace yumehiko.Platformer
         {
             if (fallSpeed > -3.0f)
             {
-                return; 
+                return;
             }
 
             soundEffect.FootStep(0.8f);
@@ -158,7 +150,7 @@ namespace yumehiko.Platformer
 
             soundEffect.Death();
 
-            thiunParticle.Play();
+            deathParticle.Play();
         }
     }
 }
