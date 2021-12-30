@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UniRx;
-using System;
 
 namespace yumehiko.Platformer
 {
@@ -8,20 +8,20 @@ namespace yumehiko.Platformer
     /// 重力に影響され、地上を左右に歩く。ジャンプする。
     /// </summary>
     [Serializable]
-    public class Walk2D : IMovable, IJumpable, IRideable, IDisposable
+    public class Walk2D : IMovable, IJumpable, IDisposable
     {
         public ReadOnlyReactiveProperty<float> OnMove => onMove.ToReadOnlyReactiveProperty();
         public IObservable<Unit> OnJump => onJump;
         public IObservable<Unit> OnFallWhileJump => onFallWhileJump;
         public ReadOnlyReactiveProperty<ActorDirection> BodyDirection => bodyDirection.ToReadOnlyReactiveProperty();
         public IGrounded Grounded => groundChecker;
+        public MovePlatformRider MovePlatformRider { get; } = new MovePlatformRider();
 
 
         [SerializeField] private Rigidbody2D body;
         [SerializeField] private float speed;
         [SerializeField] private float jumpForce;
         [SerializeField] private GroundChecker groundChecker;
-        private Vector2 additionVelocity = Vector2.zero;
         private FloatReactiveProperty onMove = new FloatReactiveProperty(0.0f);
         private Subject<Unit> onJump = new Subject<Unit>();
         private Subject<Unit> onFallWhileJump = new Subject<Unit>();
@@ -35,17 +35,18 @@ namespace yumehiko.Platformer
 
             disposables = new CompositeDisposable();
 
-            //ボディに速度を適応する。
+            //ボディに速度を反映する。
             _ = Observable.EveryFixedUpdate()
                 .Subscribe(_ => UpdateVelocity())
                 .AddTo(disposables);
 
-            //初期状態で、重力加速度を最大値で当てはめておく。
+            //空中からスタートする場合に備えて、重力加速度を最大値で当てはめておく。
             body.velocity = Physics2D.gravity;
         }
 
         public void Dispose()
         {
+            MovePlatformRider.Dispose();
             groundChecker.Dispose();
             disposables.Dispose();
         }
@@ -115,29 +116,10 @@ namespace yumehiko.Platformer
             body.velocity = new Vector2(body.velocity.x, yVelocity);
         }
 
-        /// <summary>
-        /// 移動床によって速度を調整する。
-        /// </summary>
-        /// <param name="velocity"></param>
-        public void SetRiderVelocity(Vector2 velocity)
-        {
-            velocity.y = velocity.y > 0.0f ? 0.0f : velocity.y;
-            SetAdditionVelocity(velocity);
-        }
-
-        /// <summary>
-        /// 追加の加速度をセットする。
-        /// </summary>
-        /// <param name="velocity"></param>
-        public void SetAdditionVelocity(Vector2 velocity)
-        {
-            additionVelocity = velocity;
-        }
-
 
         private void UpdateVelocity()
         {
-            body.velocity = new Vector2(onMove.Value, body.velocity.y) + additionVelocity;
+            body.velocity = new Vector2(onMove.Value, body.velocity.y) + MovePlatformRider.AdditionVelocity;
         }
     }
 }

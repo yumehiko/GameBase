@@ -8,7 +8,7 @@ namespace yumehiko.Platformer
     /// <summary>
     /// プラットフォーマーゲームのプレイヤーキャラクター。
     /// </summary>
-    public class PlatformerPlayer : MonoBehaviour, IContorlable, IDieable, IRideable
+    public class PlatformerPlayer : MonoBehaviour, IContorlable, IDieable, IMovePlatformRider
     {
         public ReadOnlyReactiveProperty<bool> IsDied => isDied.ToReadOnlyReactiveProperty();
         public bool CanControl { get; private set; } = true;
@@ -67,7 +67,9 @@ namespace yumehiko.Platformer
             isDied.Value = true;
         }
 
-        public void SetRiderVelocity(Vector2 velocity) => walk.SetRiderVelocity(velocity);
+        public void Ride(IMovePlatform platform) => walk.MovePlatformRider.Ride(platform);
+
+        public void GetOff(IMovePlatform platform) => walk.MovePlatformRider.GetOff(platform);
 
 
         private void SubscribeKeys()
