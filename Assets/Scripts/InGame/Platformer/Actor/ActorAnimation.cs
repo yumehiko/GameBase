@@ -22,10 +22,10 @@ namespace yumehiko.Platformer
         private CompositeDisposable disposables;
 
 
-        public void Awake(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded)
+        public void Awake(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded, ReadOnlyReactiveProperty<ActorDirection> bodyDirection)
         {
             //Spine.SkeletonAnimationはAwakeのタイミングでは購読できないので、1フレーム後に回す。
-            Observable.NextFrame().Subscribe(_ => SubscribeEvents(dieable, movable, jumpable, grounded));
+            Observable.NextFrame().Subscribe(_ => SubscribeEvents(dieable, movable, jumpable, grounded, bodyDirection));
         }
 
         public void Dispose()
@@ -35,7 +35,7 @@ namespace yumehiko.Platformer
         }
 
 
-        private void SubscribeEvents(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded)
+        private void SubscribeEvents(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded, ReadOnlyReactiveProperty<ActorDirection> bodyDirection)
         {
             this.grounded = grounded;
 
@@ -74,7 +74,7 @@ namespace yumehiko.Platformer
                 .AddTo(disposables);
 
             //スケルトンの向き。
-            movable.BodyDirection
+            bodyDirection
                 .Subscribe(direction => SetSkeletonDirection(direction))
                 .AddTo(disposables);
 
@@ -138,11 +138,14 @@ namespace yumehiko.Platformer
             soundEffect.FootStep(0.8f);
 
             groundedSequence?.Complete();
-            Vector2 pesyanko = new Vector2(1.5f, 0.5f);
 
+            Vector2 pesyankoScale = new Vector2(1.5f, 0.5f);
+            const float pesyankoTime = 0.125f;
+            const float pesyankoReturnTime = 0.25f;
+            
             groundedSequence = DOTween.Sequence();
-            groundedSequence.Append(visual.transform.DOScale(pesyanko, 0.125f));
-            groundedSequence.Append(visual.transform.DOScale(Vector2.one, 0.25f).SetEase(Ease.InQuad));
+            groundedSequence.Append(visual.transform.DOScale(pesyankoScale, pesyankoTime));
+            groundedSequence.Append(visual.transform.DOScale(Vector2.one, pesyankoReturnTime).SetEase(Ease.InQuad));
         }
 
         private void DeadAnimation()

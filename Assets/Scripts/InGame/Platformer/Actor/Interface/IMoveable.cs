@@ -7,7 +7,7 @@ using DG.Tweening;
 namespace yumehiko.Platformer
 {
     /// <summary>
-    /// 二次元平面上を動く。強制的に移動させることもできる。
+    /// 二次元平面上を動く。
     /// </summary>
     public interface IMovable
     {
@@ -15,11 +15,6 @@ namespace yumehiko.Platformer
         /// 移動量が指定されたとき。その移動量。
         /// </summary>
         ReadOnlyReactiveProperty<float> OnMove { get; }
-
-        /// <summary>
-        /// 2Dにおける体の向き。
-        /// </summary>
-        ReadOnlyReactiveProperty<ActorDirection> BodyDirection { get; }
 
         /// <summary>
         /// 移動量を指定する。

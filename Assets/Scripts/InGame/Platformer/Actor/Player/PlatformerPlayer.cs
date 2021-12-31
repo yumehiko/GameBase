@@ -22,7 +22,7 @@ namespace yumehiko.Platformer
         private void Awake()
         {
             walk.Awake();
-            actorAnimation.Awake(this, walk, walk, walk.Grounded);
+            actorAnimation.Awake(this, walk, walk, walk.Grounded, walk.BodyDirection);
 
             SubscribeKeys();
 
