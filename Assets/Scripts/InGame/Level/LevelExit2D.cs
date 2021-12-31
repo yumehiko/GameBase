@@ -40,14 +40,14 @@ namespace yumehiko
                 return;
             }
 
-            //プレイヤーが操作不能なときは、無視。
-            if(!player.contorlable.CanControl)
+            //プレイヤーがすでに死んでいるときは、無視。
+            if(player.IsDied.Value)
             {
                 return;
             }
 
             //このレベルをクリアする。
-            player.contorlable.SetCanControl(false);
+            player.SetCanControl(false);
             level.BeatLevel(chooseID);
         }
     }
