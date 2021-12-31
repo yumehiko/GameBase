@@ -33,7 +33,7 @@ namespace yumehiko.Platformer
 
 
 
-        public void Awake()
+        public void Initialize()
         {
             disposables = new CompositeDisposable();
 

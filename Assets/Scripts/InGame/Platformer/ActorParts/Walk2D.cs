@@ -30,9 +30,9 @@ namespace yumehiko.Platformer
         private CompositeDisposable disposables;
 
 
-        public void Awake()
+        public void Initialize()
         {
-            groundChecker.Awake();
+            groundChecker.Initialize();
 
             disposables = new CompositeDisposable();
 

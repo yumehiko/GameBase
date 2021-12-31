@@ -30,8 +30,8 @@ namespace yumehiko.Platformer
 
         private void Awake()
         {
-            walk.Awake();
-            actorAnimation.Awake(this, walk, walk, walk.Grounded, walk.BodyDirection);
+            walk.Initialize();
+            actorAnimation.Initialize(this, walk, walk, walk.Grounded, walk.BodyDirection);
             actTween = DOVirtual.DelayedCall(randomActDuration, () => RandomWalk(), false)
                 .SetLoops(-1)
                 .SetLink(gameObject);

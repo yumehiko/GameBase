@@ -5481,7 +5481,7 @@ GameObject:
   - component: {fileID: 597831470}
   - component: {fileID: 597831469}
   m_Layer: 9
-  m_Name: GroundChecker
+  m_Name: GroundCheckCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6124,7 +6124,7 @@ GameObject:
   - component: {fileID: 1315965138}
   - component: {fileID: 1315965139}
   m_Layer: 0
-  m_Name: ThiunThiun
+  m_Name: DeathParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11064,7 +11064,7 @@ Transform:
   - {fileID: 430482764}
   - {fileID: 890366568}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1485761637
 GameObject:
@@ -11877,7 +11877,7 @@ Transform:
   - {fileID: 597831470}
   - {fileID: 1542681883}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2131966183
 GameObject:
