@@ -6,7 +6,7 @@ using UniRx;
 namespace yumehiko.Resident.Control
 {
     /// <summary>
-    /// Unityの入力システムをUniRxでリアクティブに。
+    /// プレイヤーの入力（コントローラーやキーボード）を監視・管理する。
     /// </summary>
     public static class ReactiveInput
     {
@@ -29,6 +29,7 @@ namespace yumehiko.Resident.Control
         private static BoolReactiveProperty onPeke = new BoolReactiveProperty();
         private static BoolReactiveProperty onPause = new BoolReactiveProperty();
         private static BoolReactiveProperty onRestart = new BoolReactiveProperty();
+        private static BoolReactiveProperty onInventory = new BoolReactiveProperty();
         private static BoolReactiveProperty onDebug = new BoolReactiveProperty();
 
         /// <summary>
@@ -65,6 +66,11 @@ namespace yumehiko.Resident.Control
         /// リスタートボタンの入力。
         /// </summary>
         public static ReadOnlyReactiveProperty<bool> OnRestart => onRestart.ToReadOnlyReactiveProperty();
+
+        /// <summary>
+        /// インベントリボタンの入力。
+        /// </summary>
+        public static ReadOnlyReactiveProperty<bool> OnInventory => onInventory.ToReadOnlyReactiveProperty();
 
         /// <summary>
         /// デバッグボタンの入力。
@@ -105,6 +111,9 @@ namespace yumehiko.Resident.Control
 
             inputActions.Player.Debug.started += context => onDebug.Value = true;
             inputActions.Player.Debug.canceled += context => onDebug.Value = false;
+
+            inputActions.Player.Inventory.started += context => onInventory.Value = true;
+            inputActions.Player.Inventory.canceled += context => onInventory.Value = false;
         }
 
         /// <summary>

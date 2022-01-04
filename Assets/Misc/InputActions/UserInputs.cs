@@ -98,6 +98,15 @@ public partial class @UserInputs : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""808052ac-2a91-4094-8f0a-a2db43a69747"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -450,6 +459,17 @@ public partial class @UserInputs : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Debug"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cc1e6543-0dcf-455c-88c3-93260a12b529"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Inventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1056,6 +1076,7 @@ public partial class @UserInputs : IInputActionCollection2, IDisposable
         m_Player_Pointer = m_Player.FindAction("Pointer", throwIfNotFound: true);
         m_Player_RightStick = m_Player.FindAction("RightStick", throwIfNotFound: true);
         m_Player_Debug = m_Player.FindAction("Debug", throwIfNotFound: true);
+        m_Player_Inventory = m_Player.FindAction("Inventory", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1135,6 +1156,7 @@ public partial class @UserInputs : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Pointer;
     private readonly InputAction m_Player_RightStick;
     private readonly InputAction m_Player_Debug;
+    private readonly InputAction m_Player_Inventory;
     public struct PlayerActions
     {
         private @UserInputs m_Wrapper;
@@ -1147,6 +1169,7 @@ public partial class @UserInputs : IInputActionCollection2, IDisposable
         public InputAction @Pointer => m_Wrapper.m_Player_Pointer;
         public InputAction @RightStick => m_Wrapper.m_Player_RightStick;
         public InputAction @Debug => m_Wrapper.m_Player_Debug;
+        public InputAction @Inventory => m_Wrapper.m_Player_Inventory;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1180,6 +1203,9 @@ public partial class @UserInputs : IInputActionCollection2, IDisposable
                 @Debug.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug;
                 @Debug.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug;
                 @Debug.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug;
+                @Inventory.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory;
+                @Inventory.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory;
+                @Inventory.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInventory;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -1208,6 +1234,9 @@ public partial class @UserInputs : IInputActionCollection2, IDisposable
                 @Debug.started += instance.OnDebug;
                 @Debug.performed += instance.OnDebug;
                 @Debug.canceled += instance.OnDebug;
+                @Inventory.started += instance.OnInventory;
+                @Inventory.performed += instance.OnInventory;
+                @Inventory.canceled += instance.OnInventory;
             }
         }
     }
@@ -1372,6 +1401,7 @@ public partial class @UserInputs : IInputActionCollection2, IDisposable
         void OnPointer(InputAction.CallbackContext context);
         void OnRightStick(InputAction.CallbackContext context);
         void OnDebug(InputAction.CallbackContext context);
+        void OnInventory(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
