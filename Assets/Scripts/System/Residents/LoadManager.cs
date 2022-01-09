@@ -14,9 +14,6 @@ namespace yumehiko.Resident
     /// </summary>
     public static class LoadManager
     {
-        private static Subject<float> onLoadWaitStart = new Subject<float>();
-        private static Subject<float> onLoadComplete = new Subject<float>();
-
         /// <summary>
         /// ロード準備開始。また、実際のロードを開始するまでの遅延。
         /// </summary>
@@ -27,8 +24,6 @@ namespace yumehiko.Resident
         /// </summary>
         public static System.IObservable<float> OnLoadComplete => onLoadComplete;
 
-        private static Tween loadTween;
-
         /// <summary>
         /// 現在ロード中か。
         /// </summary>
@@ -38,6 +33,12 @@ namespace yumehiko.Resident
         /// 現在アクティブなシーンのID。
         /// </summary>
         public static int CurrentSceneID => SceneManager.GetActiveScene().buildIndex;
+
+
+        private static Subject<float> onLoadWaitStart = new Subject<float>();
+        private static Subject<float> onLoadComplete = new Subject<float>();
+        private static Tween loadTween;
+
 
         /// <summary>
         /// シーンを再読み込み。

@@ -8,7 +8,6 @@ using yumehiko.Resident;
 
 namespace yumehiko.UI
 {
-
     /// <summary>
     /// シーン間遷移時のアニメーション（フェードアウトなど）
     /// </summary>
@@ -18,6 +17,7 @@ namespace yumehiko.UI
         [SerializeField] private Image kuroKoma;
 
         private Sequence transition;
+
 
         private void Start()
         {
@@ -31,6 +31,7 @@ namespace yumehiko.UI
             LoadManager.OnLoadWaitStart.Subscribe(duration => FadeOut(duration)).AddTo(this);
             LoadManager.OnLoadComplete.Subscribe(duration => FadeIn(duration)).AddTo(this);
         }
+
 
         /// <summary>
         /// フェードアウト（徐々に暗くなり、見えなくなる）。

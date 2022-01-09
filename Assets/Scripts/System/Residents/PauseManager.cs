@@ -10,19 +10,19 @@ namespace yumehiko.Resident
     /// </summary>
     public static class PauseManager
     {
-        private static BoolReactiveProperty canPause = new BoolReactiveProperty(true);
-        private static BoolReactiveProperty isPause = new BoolReactiveProperty(false);
-
         /// <summary>
         /// ポーズ可能か。
         /// </summary>
-        public static ReadOnlyReactiveProperty<bool> CanPause => canPause.ToReadOnlyReactiveProperty();
+        public static IReadOnlyReactiveProperty<bool> CanPause => canPause;
 
         /// <summary>
         /// ポーズ中か。
         /// </summary>
-        public static ReadOnlyReactiveProperty<bool> IsPause => isPause.ToReadOnlyReactiveProperty();
+        public static IReadOnlyReactiveProperty<bool> IsPause => isPause;
 
+
+        private static BoolReactiveProperty canPause = new BoolReactiveProperty(true);
+        private static BoolReactiveProperty isPause = new BoolReactiveProperty(false);
 
 
         static PauseManager()

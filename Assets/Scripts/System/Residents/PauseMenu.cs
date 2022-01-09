@@ -14,9 +14,11 @@ namespace yumehiko.UI
     /// </summary>
     public class PauseMenu : MonoBehaviour
     {
+        public IReadOnlyReactiveProperty<bool> IsPause { get; } = PauseManager.IsPause;
+
+
         [SerializeField] private GameObject pausePanel;
 
-        public ReadOnlyReactiveProperty<bool> IsPause { get; } = PauseManager.IsPause;
 
         private void Start()
         {
@@ -27,12 +29,12 @@ namespace yumehiko.UI
             }
 
             PauseManager.IsPause
-                .Subscribe(isOn => SwitchPanel(isOn))
+                .Subscribe(isTrue => SwitchPanel(isTrue))
                 .AddTo(this);
 
             ReactiveInput.OnPause
-                .Where(isOn => isOn)
-                .Subscribe(isOn => PauseManager.SwitchPause())
+                .Where(isTrue => isTrue)
+                .Subscribe(_ => PauseManager.SwitchPause())
                 .AddTo(this);
         }
 

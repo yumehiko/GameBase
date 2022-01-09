@@ -5,6 +5,9 @@ using UniRx;
 
 namespace yumehiko.UI
 {
+    /// <summary>
+    /// 音量調節のメニュー。
+    /// </summary>
     public class SoundVolumeMenu : MonoBehaviour
     {
         [SerializeField] private AudioMixer audioMixer;
@@ -17,6 +20,7 @@ namespace yumehiko.UI
         private readonly string aKeyMusicVolume = "MusicVolume";
         private readonly string aKeySoundVolume = "SoundVolume";
 
+
         private void Start()
         {
             //memo: ゲーム起動時にAwakeで呼び出すと、AudioMixerが初期値を呼び出すタイミングとかぶって問題になる（editor上のみ）
@@ -24,6 +28,7 @@ namespace yumehiko.UI
             SubscribeSliders();
             LoadPrefs();
         }
+
 
         /// <summary>
         /// PlayerPrefのデータをロードし、スライダーに反映。
