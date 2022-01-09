@@ -15,7 +15,7 @@ namespace yumehiko.Platformer
         /// <summary>
         /// 乗ったものに与える速度。
         /// </summary>
-        public ReadOnlyReactiveProperty<Vector2> VelocityToRider => velocityToRider.ToReadOnlyReactiveProperty();
+        public IReadOnlyReactiveProperty<Vector2> VelocityToRider => velocityToRider;
 
 
         [SerializeField] private Rigidbody2D body;

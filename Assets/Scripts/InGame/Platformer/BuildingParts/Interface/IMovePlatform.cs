@@ -13,6 +13,6 @@ namespace yumehiko
         /// <summary>
         /// 乗っているキャラクターに与える速度。
         /// </summary>
-        ReadOnlyReactiveProperty<Vector2> VelocityToRider { get; }
+        IReadOnlyReactiveProperty<Vector2> VelocityToRider { get; }
     }
 }
