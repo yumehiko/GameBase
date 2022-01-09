@@ -10,7 +10,7 @@ namespace yumehiko.Platformer
     /// </summary>
     public class PlatformerPlayer : MonoBehaviour, IPlayer, IMovePlatformRider
     {
-        public ReadOnlyReactiveProperty<bool> IsDied => isDied.ToReadOnlyReactiveProperty();
+        public IReadOnlyReactiveProperty<bool> IsDied => isDied;
         public bool CanControl { get; private set; } = true;
 
         [SerializeField] private Walk2D walk;

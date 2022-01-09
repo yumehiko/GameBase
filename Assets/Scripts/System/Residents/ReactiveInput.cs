@@ -22,6 +22,51 @@ namespace yumehiko.Resident.Control
         /// </summary>
         public static bool InvertYAxis { get; set; } = false;
 
+        /// <summary>
+        /// 軸操作の入力。
+        /// </summary>
+        public static IReadOnlyReactiveProperty<Vector2> OnMove => onMove;
+
+        /// <summary>
+        /// ポインター操作の入力。
+        /// </summary>
+        public static IReadOnlyReactiveProperty<Vector2> OnPointer => onPointer;
+
+        /// <summary>
+        /// 右スティック操作の入力。
+        /// </summary>
+        public static IReadOnlyReactiveProperty<Vector2> OnRightStick => onRightStick;
+
+        /// <summary>
+        /// マルボタンの入力。
+        /// </summary>
+        public static IReadOnlyReactiveProperty<bool> OnMaru => onMaru;
+
+        /// <summary>
+        /// ペケボタンの入力。
+        /// </summary>
+        public static IReadOnlyReactiveProperty<bool> OnPeke => onPeke;
+
+        /// <summary>
+        /// ポーズボタンの入力。
+        /// </summary>
+        public static IReadOnlyReactiveProperty<bool> OnPause => onPause;
+
+        /// <summary>
+        /// リスタートボタンの入力。
+        /// </summary>
+        public static IReadOnlyReactiveProperty<bool> OnRestart => onRestart;
+
+        /// <summary>
+        /// インベントリボタンの入力。
+        /// </summary>
+        public static IReadOnlyReactiveProperty<bool> OnInventory => onInventory;
+
+        /// <summary>
+        /// デバッグボタンの入力。
+        /// </summary>
+        public static IReadOnlyReactiveProperty<bool> OnDebug => onDebug;
+
         private static Vector2ReactiveProperty onMove = new Vector2ReactiveProperty();
         private static Vector2ReactiveProperty onPointer = new Vector2ReactiveProperty();
         private static Vector2ReactiveProperty onRightStick = new Vector2ReactiveProperty();
@@ -32,55 +77,12 @@ namespace yumehiko.Resident.Control
         private static BoolReactiveProperty onInventory = new BoolReactiveProperty();
         private static BoolReactiveProperty onDebug = new BoolReactiveProperty();
 
-        /// <summary>
-        /// 軸操作の入力。
-        /// </summary>
-        public static ReadOnlyReactiveProperty<Vector2> OnMove => onMove.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// ポインター操作の入力。
-        /// </summary>
-        public static ReadOnlyReactiveProperty<Vector2> OnPointer => onPointer.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// 右スティック操作の入力。
-        /// </summary>
-        public static ReadOnlyReactiveProperty<Vector2> OnRightStick => onRightStick.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// マルボタンの入力。
-        /// </summary>
-        public static ReadOnlyReactiveProperty<bool> OnMaru => onMaru.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// ペケボタンの入力。
-        /// </summary>
-        public static ReadOnlyReactiveProperty<bool> OnPeke => onPeke.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// ポーズボタンの入力。
-        /// </summary>
-        public static ReadOnlyReactiveProperty<bool> OnPause => onPause.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// リスタートボタンの入力。
-        /// </summary>
-        public static ReadOnlyReactiveProperty<bool> OnRestart => onRestart.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// インベントリボタンの入力。
-        /// </summary>
-        public static ReadOnlyReactiveProperty<bool> OnInventory => onInventory.ToReadOnlyReactiveProperty();
-
-        /// <summary>
-        /// デバッグボタンの入力。
-        /// </summary>
-        public static ReadOnlyReactiveProperty<bool> OnDebug => onDebug.ToReadOnlyReactiveProperty();
 
         static ReactiveInput()
         {
             SubscribeInputs();
         }
+
 
         private static void SubscribeInputs()
         {

@@ -15,7 +15,6 @@ namespace yumehiko.Platformer
         /// </summary>
         public Vector2 AdditionVelocity { get; private set; }
 
-        [SerializeField] private Rigidbody2D body;
         private IDisposable platformObserver;
         private IMovePlatform ridingPlatform;
 

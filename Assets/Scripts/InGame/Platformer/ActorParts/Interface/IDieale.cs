@@ -13,7 +13,7 @@ namespace yumehiko
         /// <summary>
         /// 死亡したか。
         /// </summary>
-        ReadOnlyReactiveProperty<bool> IsDied { get; }
+        IReadOnlyReactiveProperty<bool> IsDied { get; }
 
         /// <summary>
         /// 死亡する。

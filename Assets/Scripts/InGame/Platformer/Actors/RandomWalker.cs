@@ -11,7 +11,7 @@ namespace yumehiko.Platformer
     /// </summary>
     public class RandomWalker : MonoBehaviour, IDieable, IMovePlatformRider
     {
-        public ReadOnlyReactiveProperty<bool> IsDied => isDied.ToReadOnlyReactiveProperty();
+        public IReadOnlyReactiveProperty<bool> IsDied => isDied;
 
         [SerializeField] private Walk2D walk;
         [SerializeField] private ActorAnimation actorAnimation;

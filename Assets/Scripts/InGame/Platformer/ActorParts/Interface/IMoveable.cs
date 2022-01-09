@@ -14,7 +14,7 @@ namespace yumehiko.Platformer
         /// <summary>
         /// 移動量が指定されたとき。その移動量。
         /// </summary>
-        ReadOnlyReactiveProperty<float> OnMove { get; }
+        IReadOnlyReactiveProperty<float> OnMove { get; }
 
         /// <summary>
         /// 移動量を指定する。

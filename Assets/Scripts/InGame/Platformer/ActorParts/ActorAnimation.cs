@@ -22,7 +22,7 @@ namespace yumehiko.Platformer
         private CompositeDisposable disposables;
 
 
-        public void Initialize(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded, ReadOnlyReactiveProperty<ActorDirection> bodyDirection)
+        public void Initialize(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded, IReadOnlyReactiveProperty<ActorDirection> bodyDirection)
         {
             //Spine.SkeletonAnimationはAwakeのタイミングでは購読できないので、1フレーム後に回す。
             Observable.NextFrame().Subscribe(_ => SubscribeEvents(dieable, movable, jumpable, grounded, bodyDirection));
@@ -35,7 +35,7 @@ namespace yumehiko.Platformer
         }
 
 
-        private void SubscribeEvents(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded, ReadOnlyReactiveProperty<ActorDirection> bodyDirection)
+        private void SubscribeEvents(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded, IReadOnlyReactiveProperty<ActorDirection> bodyDirection)
         {
             this.grounded = grounded;
 

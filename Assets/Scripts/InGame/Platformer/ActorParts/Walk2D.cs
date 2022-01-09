@@ -10,10 +10,10 @@ namespace yumehiko.Platformer
     [Serializable]
     public class Walk2D : IMovable, IJumpable, IDisposable
     {
-        public ReadOnlyReactiveProperty<float> OnMove => onMove.ToReadOnlyReactiveProperty();
+        public IReadOnlyReactiveProperty<float> OnMove => onMove;
         public IObservable<Unit> OnJump => onJump;
         public IObservable<Unit> OnFallWhileJump => onFallWhileJump;
-        public ReadOnlyReactiveProperty<ActorDirection> BodyDirection => bodyDirection.ToReadOnlyReactiveProperty();
+        public IReadOnlyReactiveProperty<ActorDirection> BodyDirection => bodyDirection;
         public IGrounded Grounded => groundChecker;
         public MovePlatformRider MovePlatformRider => movePlatformRider;
 

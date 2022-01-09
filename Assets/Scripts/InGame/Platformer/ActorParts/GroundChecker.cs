@@ -19,7 +19,7 @@ namespace yumehiko.Platformer
         /// <summary>
         /// 地面に触れているか。
         /// </summary>
-        public ReadOnlyReactiveProperty<bool> IsGrounded => isGrounded.ToReadOnlyReactiveProperty();
+        public IReadOnlyReactiveProperty<bool> IsGrounded => isGrounded;
 
         /// <summary>
         /// 前フレームの落下速度。

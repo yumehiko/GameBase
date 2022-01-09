@@ -10,7 +10,7 @@ namespace yumehiko.Platformer
     /// </summary>
     public interface IGrounded
     {
-        ReadOnlyReactiveProperty<bool> IsGrounded { get; }
+        IReadOnlyReactiveProperty<bool> IsGrounded { get; }
         float FallSpeedOnLastFrame { get; }
 
         /// <summary>
