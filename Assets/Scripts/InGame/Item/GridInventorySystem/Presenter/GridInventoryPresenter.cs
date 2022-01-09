@@ -19,14 +19,23 @@ namespace yumehiko.Item.GridInventorySystem
         [SerializeField] private GridInventoryView view;
         [SerializeField] private GridItemPresenter itemPresenterPrefab;
         private GridInventory model;
+        
 
         private void Awake()
         {
             model = new GridInventory(size);
             view.SetSize(size);
 
-            _ = view.OnDropEvent
-                .Subscribe(data => TryMoveDragAndDropItem(data))
+            _ = view.OnDropAsObservable()
+                .Subscribe(eventData => cursor.DropToInventory(this))
+                .AddTo(this);
+
+            _ = view.OnPointerEnterAsObservable()
+                .Subscribe(eventData => cursor.EnterInventory(this))
+                .AddTo(this);
+
+            _ = view.OnPointerExitAsObservable()
+                .Subscribe(_ => cursor.ExitInventory())
                 .AddTo(this);
         }
 
@@ -41,7 +50,6 @@ namespace yumehiko.Item.GridInventorySystem
             //配置できないならエラー。
             if (!model.CanPlace(slotPosition, item))
             {
-                model.DebugSlotEmptyInfo();
                 throw new System.Exception("ここには配置できない。");
             }
 
@@ -58,30 +66,10 @@ namespace yumehiko.Item.GridInventorySystem
             model.RemoveItem(item, slotPosition);
         }
 
-
-        /// <summary>
-        /// このインベントリに、ドラッグアンドドロップでアイテムを移動させる。
-        /// </summary>
-        /// <param name="eventData"></param>
-        private void TryMoveDragAndDropItem(PointerEventData eventData)
-        {
-            GridItemPresenter itemPresenter = eventData.pointerDrag.GetComponent<GridItemPresenter>();
-            if (itemPresenter == null)
-            {
-                return;
-            }
-
-            Vector2Int slotPosition = view.GetSlotByPoint(eventData.position);
-            GridItem item = itemPresenter.ItemData;
-
-            //配置できないなら無視。
-            if (!model.CanPlace(slotPosition, item))
-            {
-                return;
-            }
-
-            itemPresenter.Move(this, slotPosition);
-            model.AddItem(item, slotPosition);
-        }
+        public Vector2Int GetSlotByPoint(Vector2 point) => view.GetSlotByPoint(point);
+        public Vector2 GetPointBySlot(Vector2Int slotPosition) => view.GetPointBySlot(slotPosition);
+        public bool CanPlace(Vector2Int slotPosition, GridItem item) => model.CanPlace(slotPosition, item);
+        public bool CanPlaceWithSize(Vector2Int slotPosition, GridItem item, out Vector2Int size) => model.CanPlaceWithSize(slotPosition, item, out size);
+        public void AddItem(GridItem item, Vector2Int slotPosition) => model.AddItem(item, slotPosition);
     }
 }

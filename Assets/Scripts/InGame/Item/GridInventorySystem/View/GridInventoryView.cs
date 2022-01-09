@@ -10,15 +10,13 @@ namespace yumehiko.Item.GridInventorySystem
     /// <summary>
     /// インベントリのゲーム上での表現と操作。
     /// </summary>
-    public class GridInventoryView : UIBehaviour, IDropHandler
+    public class GridInventoryView : UIBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        public System.IObservable<PointerEventData> OnDropEvent => onDropEvent;
-
         [SerializeField] private Image outline;
+        //[SerializeField] private Image gridGuide;
         [SerializeField] private RawImage slotImage;
 
         private Vector2 leftTopCorner;
-        private Subject<PointerEventData> onDropEvent = new Subject<PointerEventData>();
 
 
         protected override void Awake()
@@ -26,11 +24,10 @@ namespace yumehiko.Item.GridInventorySystem
             leftTopCorner = GetLeftTopCorner();
         }
 
-        public void OnDrop(PointerEventData eventData)
-        {
-            onDropEvent.OnNext(eventData);
-        }
+        public void OnPointerEnter(PointerEventData eventData) { }
+        public void OnPointerExit(PointerEventData eventData) { }
 
+        public void OnDrop(PointerEventData eventData) { }
 
         /// <summary>
         /// インベントリのサイズを設定する。
@@ -57,6 +54,17 @@ namespace yumehiko.Item.GridInventorySystem
             return new Vector2Int((int)pointToSlot.x, (int)pointToSlot.y);
         }
 
+        /// <summary>
+        /// スロット座標から、そのスロット座標の左上のスクリーン座標を返す。
+        /// </summary>
+        /// <param name="slotPosition"></param>
+        /// <returns></returns>
+        public Vector2 GetPointBySlot(Vector2Int slotPosition)
+        {
+            //スロット座標を左下原点のスクリーン座標に変換する。
+            Vector2 slotToScreenPoint = leftTopCorner + (slotPosition * new Vector2(1, -1) * GridInventory.SlotSize);
+            return slotToScreenPoint;
+        }
 
         /// <summary>
         /// このRectTransformの左上を原点としたスクリーン座標を返す。

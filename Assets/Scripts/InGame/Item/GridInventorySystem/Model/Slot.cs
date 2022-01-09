@@ -27,7 +27,7 @@ namespace yumehiko.Item.GridInventorySystem
         {
             if(item == null)
             {
-                throw new NullReferenceException();
+                throw new ArgumentNullException();
             }
 
             Item = item;
@@ -45,10 +45,10 @@ namespace yumehiko.Item.GridInventorySystem
         /// 指定した占有物をここに配置できるかを返す。
         /// </summary>
         /// <returns></returns>
-        public bool CanPlace(GridItem occupant)
+        public bool CanPlace(GridItem item)
         {
             //同一の占有物ならtrue（1マスずれるだけとかなので）。
-            if (occupant == Item)
+            if (item == Item)
             {
                 return true;
             }

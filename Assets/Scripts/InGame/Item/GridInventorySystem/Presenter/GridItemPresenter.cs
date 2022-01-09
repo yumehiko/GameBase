@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using UniRx.Triggers;
 
 namespace yumehiko.Item.GridInventorySystem
 {
     public class GridItemPresenter : MonoBehaviour
     {
-        public GridItem ItemData => model;
+        public GridItem Model => model;
+        public Item Item => model.Item;
         public GridInventoryPresenter Inventory { get; private set; }
 
         [SerializeField] private GridItemView view;
@@ -19,7 +21,7 @@ namespace yumehiko.Item.GridInventorySystem
             GridItemPresenter instance = Instantiate(this, inventory.transform);
             Vector2 localPosition = new Vector2(slotPosition.x, -slotPosition.y) * GridInventory.SlotSize;
             instance.transform.localPosition = localPosition;
-            instance.SetData(itemData, inventory, slotPosition);
+            instance.SetItemData(itemData, inventory, slotPosition);
         }
 
         /// <summary>
@@ -33,20 +35,54 @@ namespace yumehiko.Item.GridInventorySystem
             currentSlotPosition = slotPosition;
         }
 
+        public void ChangeColorByMergeResult(MergeCheckResult result) => view.ChangeColorByMergeResult(result);
+        public void ResetColorToWhite() => view.ResetColorToWhite();
 
-        private void SetData(GridItem itemData, GridInventoryPresenter inventory, Vector2Int slotPosition)
+
+        private void SetItemData(GridItem itemData, GridInventoryPresenter inventory, Vector2Int slotPosition)
         {
             Inventory = inventory;
             model = itemData;
             currentSlotPosition = slotPosition;
-            view.SetItemData(itemData);
-            _ = view.OnDragStart
-                .Subscribe(eventData => Inventory.Cursor.StartDragGhost(eventData, view.ItemSprite, transform.position))
+            view.SetView(itemData.Sprite, itemData.Stack.Value, itemData.Size);
+
+            GridInventoryCursor Cursor = Inventory.Cursor;
+
+            //viewとmodelのイベント購読。
+            _ = view.OnBeginDragAsObservable()
+                .Subscribe(eventData => Inventory.Cursor.StartDrag(this, eventData))
                 .AddTo(this);
 
-            _ = view.OnDragEnd
-                .Subscribe(_ => Inventory.Cursor.EndDragGhost())
+            _ = view.OnEndDragAsObservable()
+                .Subscribe(_ => Cursor.EndDrag())
                 .AddTo(this);
+
+            _ = view.OnDropAsObservable()
+                .Subscribe(_ => Cursor.DropToItem(this))
+                .AddTo(this);
+
+            _ = view.OnPointerEnterAsObservable()
+                .Subscribe(_ => Cursor.EnterItem(this))
+                .AddTo(this);
+
+            _ = view.OnPointerExitAsObservable()
+                .Subscribe(_ => Cursor.ExitItem(this))
+                .AddTo(this);
+
+            _ = model.Stack
+                .Subscribe(amount => view.RefleshAmountView(amount))
+                .AddTo(this);
+
+            _ = model.Stack
+                .Where(amount => amount <= 0)
+                .Subscribe(_ => Remove())
+                .AddTo(this);
+        }
+
+        private void Remove()
+        {
+            Inventory.RemoveItem(model, currentSlotPosition);
+            Destroy(gameObject);
         }
     }
 }

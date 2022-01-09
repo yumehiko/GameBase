@@ -7,35 +7,149 @@ using UniRx;
 
 namespace yumehiko.Item.GridInventorySystem
 {
-    public class GridInventoryCursor : MonoBehaviour
+    public class GridInventoryCursor : UIBehaviour
     {
-        [SerializeField] private Image ghostImage;
+        public GridItemPresenter DraggingItem { get; private set; }
+        public IReadOnlyReactiveProperty<bool> IsDragging => isDragging;
+        public IReadOnlyReactiveProperty<Vector2> Position => position;
+        public IReadOnlyReactiveProperty<GridInventoryPresenter> TouchingInventory => touchingInventory;
+        public IReadOnlyReactiveProperty<MergeCheckResult> CurrentMergeCheckResult => currentMergeCheckResult;
 
-        private System.IDisposable cursorObserveer;
+        private ReactiveProperty<GridInventoryPresenter> touchingInventory = new ReactiveProperty<GridInventoryPresenter>();
+        private Vector2ReactiveProperty position = new Vector2ReactiveProperty();
+        private BoolReactiveProperty isDragging = new BoolReactiveProperty();
+        private ReactiveProperty<MergeCheckResult> currentMergeCheckResult = new ReactiveProperty<MergeCheckResult>();
+        private System.IDisposable cursorUpdateObserver;
 
-        /// <summary>
-        /// ドラッグ中のゴースト（ドラッグ中のアイテムの補助表示）を切り替える。
-        /// </summary>
-        /// <param name="isOn"></param>
-        /// <param name="sprite"></param>
-        public void StartDragGhost(PointerEventData eventData, Sprite sprite, Vector2 pivot)
+
+        public void StartDrag(GridItemPresenter gridItem, PointerEventData eventData)
         {
-            ghostImage.enabled = true;
-            ghostImage.sprite = sprite;
-            ghostImage.SetNativeSize();
-            transform.position = eventData.position;
-
-            Vector2 offset = pivot - eventData.position;
-
-            cursorObserveer = Observable.EveryUpdate()
-                .Subscribe(_ => transform.position = eventData.position + offset)
+            DraggingItem = gridItem;
+            position.Value = eventData.position;
+            cursorUpdateObserver = Observable.EveryUpdate()
+                .Subscribe(_ => position.Value = eventData.position)
                 .AddTo(this);
+            isDragging.Value = true;
+            Cursor.visible = false;
         }
 
-        public void EndDragGhost()
+        public void EndDrag()
         {
-            cursorObserveer.Dispose();
-            ghostImage.enabled = false;
+            DraggingItem = null;
+            cursorUpdateObserver.Dispose();
+            isDragging.Value = false;
+            Cursor.visible = true;
+        }
+
+        /// <summary>
+        /// ドラッグアンドドロップで、ドラッグ中のアイテムをアイテムにドロップする。
+        /// </summary>
+        public void DropToItem(GridItemPresenter dropTarget)
+        {
+            //ドラッグ元とドロップ先が同じアイテムなら、無視。
+            if (DraggingItem == dropTarget)
+            {
+                return;
+            }
+
+            //IDが異なるならスタック不能なので、無視。
+            if (DraggingItem.Item.ID != dropTarget.Item.ID)
+            {
+                return;
+            }
+
+            //スタックをマージする。
+            int overflow = dropTarget.Model.TryMergeStack(DraggingItem.Model);
+            DraggingItem.Model.SetStackAmount(overflow);
+            ExitItem(dropTarget);
+            EndDrag();
+        }
+
+        /// <summary>
+        /// ドラッグアンドロップで、アイテムをインベントリにドロップする。
+        /// </summary>
+        /// <param name="dropTarget"></param>
+        public void DropToInventory(GridInventoryPresenter dropTarget)
+        {
+            Vector2Int dropSlotPosition = dropTarget.GetSlotByPoint(position.Value);
+            bool canPlace = dropTarget.CanPlace(dropSlotPosition, DraggingItem.Model);
+
+            if (!canPlace)
+            {
+                return;
+            }
+
+            DraggingItem.Move(dropTarget, dropSlotPosition);
+            dropTarget.AddItem(DraggingItem.Model, dropSlotPosition);
+        }
+
+        /// <summary>
+        /// インベントリの中にカーソルが入った時の処理。
+        /// </summary>
+        /// <param name="inventory"></param>
+        /// <param name="point"></param>
+        public void EnterInventory(GridInventoryPresenter inventory)
+        {
+            touchingInventory.Value = inventory;
+        }
+
+        /// <summary>
+        /// インベントリからカーソルが出たときの処理。
+        /// </summary>
+        public void ExitInventory()
+        {
+            touchingInventory.Value = null;
+        }
+
+        public void EnterItem(GridItemPresenter item)
+        {
+            if(!IsDragging.Value)
+            {
+                return;
+            }
+            MergeCheckResult result = CheckCanMergeItems(item);
+            currentMergeCheckResult.Value = result;
+            item.ChangeColorByMergeResult(result);
+        }
+
+        public void ExitItem(GridItemPresenter item)
+        {
+            currentMergeCheckResult.Value = MergeCheckResult.None;
+            item.ResetColorToWhite();
+        }
+
+
+        /// <summary>
+        /// 指定したアイテムに、現在ドラッグ中のアイテムがマージ可能か確認し、その結果を返す。
+        /// </summary>
+        private MergeCheckResult CheckCanMergeItems(GridItemPresenter mergeTarget)
+        {
+            //ターゲットがnullならnone。
+            if (mergeTarget == null)
+            {
+                return MergeCheckResult.None;
+            }
+
+            //まったく同じもの同士（ドラッグ元＝確認先）の場合
+            if (mergeTarget == DraggingItem)
+            {
+                return MergeCheckResult.SameItem;
+            }
+
+            //同IDのアイテムではない場合
+            if (mergeTarget.Item.ID != DraggingItem.Item.ID)
+            {
+                return MergeCheckResult.Forbid;
+            }
+
+            //すでに最大量の場合
+            if (mergeTarget.Model.MaxStack == mergeTarget.Model.Stack.Value)
+            {
+                return MergeCheckResult.Forbid;
+            }
+
+            //マージ可能な場合。
+            return MergeCheckResult.Permit;
         }
     }
 }

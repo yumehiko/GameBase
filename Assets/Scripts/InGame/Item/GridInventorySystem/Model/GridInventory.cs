@@ -12,7 +12,10 @@ namespace yumehiko.Item.GridInventorySystem
     /// </summary>
     public class GridInventory
     {
-        public readonly static float SlotSize = 64.0f;
+        /// <summary>
+        /// グリッドインベントリの1スロットの一辺のスクリーン上でのサイズ。
+        /// </summary>
+        public readonly static int SlotSize = 64;
         public Slot[,] Slots { get; }
         public Vector2Int Size { get; }
 
@@ -92,13 +95,19 @@ namespace yumehiko.Item.GridInventorySystem
         /// <summary>
         /// アイテムをスロットに配置できるかを返す。
         /// </summary>
-        /// <param name="position">配置する座標（左上原点）。</param>
+        /// <param name="slotPosition">配置するもののスロット座標（左上原点）。</param>
         /// <param name="item">配置するもの。</param>
-        public bool CanPlace(Vector2Int position, GridItem item)
+        public bool CanPlace(Vector2Int slotPosition, GridItem item)
         {
+            //占有物の左端または上端がポケットサイズをはみでるなら、false。
+            if (slotPosition.x < 0 || slotPosition.y < 0)
+            {
+                return false;
+            }
+
             //占有物のスロット上の右端と下端の座標
-            int endX = position.x + item.Size.x;
-            int endY = position.y + item.Size.y;
+            int endX = slotPosition.x + item.Size.x;
+            int endY = slotPosition.y + item.Size.y;
 
             //占有物の右端または下端がポケットサイズをはみでるなら、false。
             if (endX > Size.x || endY > Size.y)
@@ -107,9 +116,9 @@ namespace yumehiko.Item.GridInventorySystem
             }
 
             //範囲内のすべてのSlotが空でないなら、false。
-            for (int y = position.y; y < endY; y++)
+            for (int y = slotPosition.y; y < endY; y++)
             {
-                for (int x = position.x; x < endX; x++)
+                for (int x = slotPosition.x; x < endX; x++)
                 {
                     if (!Slots[x, y].CanPlace(item))
                     {
@@ -122,6 +131,60 @@ namespace yumehiko.Item.GridInventorySystem
         }
 
         /// <summary>
+        /// アイテムをスロットに配置できるかを返す。
+        /// 外枠にはみでる場合は、はみでないサイズを返す。
+        /// </summary>
+        /// <param name="slotPosition"></param>
+        /// <param name="item"></param>
+        /// <param name="maskedSize"></param>
+        /// <returns></returns>
+        public bool CanPlaceWithSize(Vector2Int slotPosition, GridItem item, out Vector2Int maskedSize)
+        {
+            //占有物の左端または上端がポケットサイズをはみでるなら、false。
+            if (slotPosition.x < 0 || slotPosition.y < 0)
+            {
+                maskedSize = Vector2Int.zero;
+                return false;
+            }
+
+            //占有物の位置が右端または下端より外に指定されている場合は、false。
+            if(slotPosition.x >= Size.x || slotPosition.y >= Size.y)
+            {
+                maskedSize = Vector2Int.zero;
+                return false;
+            }
+
+            //占有物のスロット上の右端と下端の座標
+            int endX = slotPosition.x + item.Size.x;
+            int endY = slotPosition.y + item.Size.y;
+
+            //占有物の右端または下端がポケットサイズを一部はみでるなら、false。
+            if (endX > Size.x || endY > Size.y)
+            {
+                int maskedX = endX - Size.x <= 0 ? item.Size.x : endX - Size.x;
+                int maskedY = endY - Size.y <= 0 ? item.Size.y : endY - Size.y;
+                maskedSize = new Vector2Int(maskedX, maskedY);
+                return false;
+            }
+
+            //範囲内のすべてのSlotが空でないなら、false。
+            for (int y = slotPosition.y; y < endY; y++)
+            {
+                for (int x = slotPosition.x; x < endX; x++)
+                {
+                    if (!Slots[x, y].CanPlace(item))
+                    {
+                        maskedSize = item.Size;
+                        return false;
+                    }
+                }
+            }
+
+            maskedSize = item.Size;
+            return true;
+        }
+
+        /// <summary>
         /// 指定したアイテムがインベントリ内に存在するか確認する。
         /// </summary>
         /// <param name="item"></param>
@@ -130,23 +193,5 @@ namespace yumehiko.Item.GridInventorySystem
         {
             return items.Contains(item);
         }
-
-        public void DebugSlotEmptyInfo()
-        {
-            string info = "";
-
-            for (int y = 0; y < Size.x; y++)
-            {
-                string newLine = "";
-                for (int x = 0; x < Size.y; x++)
-                {
-                    newLine += Slots[x, y].IsEmpty ? 0 : 1;
-                }
-                info += newLine + Environment.NewLine;
-            }
-
-            Debug.Log(info);
-        }
-
     }
 }

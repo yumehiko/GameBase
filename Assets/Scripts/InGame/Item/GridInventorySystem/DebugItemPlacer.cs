@@ -12,20 +12,22 @@ namespace yumehiko.Item.GridInventorySystem
 
         private void Start()
         {
-            Item item = new Item(0, "Dummy");
-            GridItem gridItem1x1 = new GridItem(item, 10, new Vector2Int(1, 1), dummySprites[0]);
-            GridItem gridOran1x1 = new GridItem(item, 10, new Vector2Int(1, 1), dummySprites[1]);
-            GridItem gridItem3x1 = new GridItem(item, 10, new Vector2Int(3, 1), dummySprites[2]);
-            GridItem gridItem1x2 = new GridItem(item, 10, new Vector2Int(1, 2), dummySprites[3]);
-            GridItem gridItem2x2 = new GridItem(item, 10, new Vector2Int(2, 2), dummySprites[4]);
+            Item item0 = new Item(0, "Dummy0");
+            Item item1 = new Item(1, "Dummy1");
+            Item item2 = new Item(2, "Dummy2");
+            Item item3 = new Item(3, "Dummy3");
+            Item item4 = new Item(4, "Dummy4");
+            GridItem gridItem1x1 = new GridItem(item0, 10, 25, new Vector2Int(1, 1), dummySprites[0]);
+            GridItem gridItem1x1_2 = new GridItem(item0, 10, 25, new Vector2Int(1, 1), dummySprites[0]);
+            GridItem gridItem1x1_3 = new GridItem(item0, 10, 25, new Vector2Int(1, 1), dummySprites[0]);
+            GridItem gridItem2x2 = new GridItem(item4, 1, 2, new Vector2Int(2, 2), dummySprites[4]);
+            GridItem gridItem2x2_2 = new GridItem(item4, 2, 2, new Vector2Int(2, 2), dummySprites[4]);
 
             AddItem(gridItem1x1, new Vector2Int(0, 0));
-            AddItem(gridItem3x1, new Vector2Int(1, 0));
-            AddItem(gridItem1x1, new Vector2Int(0, 1));
-            AddItem(gridOran1x1, new Vector2Int(1, 1));
+            AddItem(gridItem1x1_2, new Vector2Int(1, 0));
+            AddItem(gridItem1x1_3, new Vector2Int(2, 0));
             AddItem(gridItem2x2, new Vector2Int(0, 2));
-            AddItem(gridItem1x2, new Vector2Int(3, 1));
-            AddItem(gridItem1x1, new Vector2Int(3, 3));
+            AddItem(gridItem2x2_2, new Vector2Int(2, 2));
         }
 
         private void AddItem(GridItem item, Vector2Int slotPosition)
