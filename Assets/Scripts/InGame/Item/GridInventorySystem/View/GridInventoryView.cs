@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UniRx;
 
-namespace yumehiko.Item.GridInventorySystem
+namespace yumehiko.ItemSystem.GridInventory
 {
     /// <summary>
     /// インベントリのゲーム上での表現と操作。
@@ -13,7 +13,6 @@ namespace yumehiko.Item.GridInventorySystem
     public class GridInventoryView : UIBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private Image outline;
-        //[SerializeField] private Image gridGuide;
         [SerializeField] private RawImage slotImage;
 
         private Vector2 leftTopCorner;
@@ -26,7 +25,6 @@ namespace yumehiko.Item.GridInventorySystem
 
         public void OnPointerEnter(PointerEventData eventData) { }
         public void OnPointerExit(PointerEventData eventData) { }
-
         public void OnDrop(PointerEventData eventData) { }
 
         /// <summary>
@@ -65,6 +63,7 @@ namespace yumehiko.Item.GridInventorySystem
             Vector2 slotToScreenPoint = leftTopCorner + (slotPosition * new Vector2(1, -1) * GridInventory.SlotSize);
             return slotToScreenPoint;
         }
+
 
         /// <summary>
         /// このRectTransformの左上を原点としたスクリーン座標を返す。

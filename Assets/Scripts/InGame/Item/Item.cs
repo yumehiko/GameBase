@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
-namespace yumehiko.Item
+namespace yumehiko.ItemSystem
 {
     /// <summary>
 	/// アイテム。ゲーム上の物品などを表す。

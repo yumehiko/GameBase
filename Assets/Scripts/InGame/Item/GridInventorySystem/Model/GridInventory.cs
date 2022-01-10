@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
-namespace yumehiko.Item.GridInventorySystem
+namespace yumehiko.ItemSystem.GridInventory
 {
     /// <summary>
     /// グリッドインベントリ。1ないし複数のスロットを持つ。
@@ -19,7 +19,7 @@ namespace yumehiko.Item.GridInventorySystem
         public Slot[,] Slots { get; }
         public Vector2Int Size { get; }
 
-        private readonly List<GridItem> items = new List<GridItem>(); 
+        public readonly List<GridItem> Items = new List<GridItem>(); 
 
 
         public GridInventory(Vector2Int size)
@@ -27,18 +27,17 @@ namespace yumehiko.Item.GridInventorySystem
             Size = size;
             Slots = new Slot[size.x, size.y];
 
-            for (int y = 0; y < Size.x; y++)
+            for (int y = 0; y < Size.y; y++)
             {
-                for (int x = 0; x < Size.y; x++)
+                for (int x = 0; x < Size.x; x++)
                 {
                     Slots[x, y] = new Slot();
                 }
             }
-
         }
 
         /// <summary>
-        /// アイテムをポケットに追加する。
+        /// アイテムをスロットに追加する。
         /// </summary>
         /// <param name="slotPosition">配置する座標（左上原点）。</param>
         /// <param name="item">配置するもの。</param>
@@ -62,14 +61,14 @@ namespace yumehiko.Item.GridInventorySystem
                 }
             }
 
-            items.Add(item);
+            Items.Add(item);
         }
 
         /// <summary>
-        /// 指定したアイテムをポケットから除外する。
+        /// 指定したアイテムをスロットから除外する。
         /// </summary>
         /// <param name="item"></param>
-        public void RemoveItem(GridItem item, Vector2Int slotPosition)
+        public void RemoveItem(GridItem item)
         {
             if(!Contains(item))
             {
@@ -77,19 +76,19 @@ namespace yumehiko.Item.GridInventorySystem
             }
 
             //占有物のスロット上の右端と下端の座標
-            int endX = slotPosition.x + item.Size.x;
-            int endY = slotPosition.y + item.Size.y;
+            int endX = item.SlotPosition.x + item.Size.x;
+            int endY = item.SlotPosition.y + item.Size.y;
 
             //範囲内全てのスロットから占有物を削除。
-            for (int y = slotPosition.y; y < endY; y++)
+            for (int y = item.SlotPosition.y; y < endY; y++)
             {
-                for (int x = slotPosition.x; x < endX; x++)
+                for (int x = item.SlotPosition.x; x < endX; x++)
                 {
                     Slots[x, y].Empty();
                 }
             }
 
-            items.Remove(item);
+            Items.Remove(item);
         }
 
         /// <summary>
@@ -191,7 +190,7 @@ namespace yumehiko.Item.GridInventorySystem
         /// <returns></returns>
         public bool Contains(GridItem item)
         {
-            return items.Contains(item);
+            return Items.Contains(item);
         }
     }
 }

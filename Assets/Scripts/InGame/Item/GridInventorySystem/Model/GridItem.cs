@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
-namespace yumehiko.Item.GridInventorySystem
+namespace yumehiko.ItemSystem.GridInventory
 {
     /// <summary>
 	/// スロットの占有者。スロットに実際に配置されるアイテム。
@@ -32,15 +32,22 @@ namespace yumehiko.Item.GridInventorySystem
         /// </summary>
         public Sprite Sprite { get; }
 
+        /// <summary>
+        /// 現在のスロット上の座標。
+        /// TODO:ここに記録せず、Inventory側で管理できるように目録クラスを作る。
+        /// </summary>
+        public Vector2Int SlotPosition { get; private set; }
+
         private IntReactiveProperty stack;
 
-        public GridItem(Item item, int amount, int maxStack, Vector2Int size, Sprite sprite)
+        public GridItem(Item item, int amount, int maxStack, Sprite sprite, Vector2Int size, Vector2Int slotPosition)
         {
             Item = item;
             stack = new IntReactiveProperty(amount);
             MaxStack = maxStack;
             Size = size;
             Sprite = sprite;
+            SlotPosition = slotPosition;
         }
 
         /// <summary>
@@ -68,6 +75,11 @@ namespace yumehiko.Item.GridInventorySystem
         public void SetStackAmount(int amount)
         {
             stack.Value = amount;
+        }
+
+        public void Move(Vector2Int slotPosition)
+        {
+            SlotPosition = slotPosition;
         }
     }
 }

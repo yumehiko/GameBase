@@ -5,26 +5,31 @@ using UnityEngine.EventSystems;
 using UniRx;
 using UniRx.Triggers;
 
-namespace yumehiko.Item.GridInventorySystem
+namespace yumehiko.ItemSystem.GridInventory
 {
     /// <summary>
     /// グリッドインベントリのViewとModelの橋渡し。
     /// </summary>
     public class GridInventoryPresenter : MonoBehaviour
     {
-        public GridInventoryCursor Cursor => cursor;
+        public GridInventoryCursor Cursor { get; private set; }
 
-        [SerializeField] private GridInventoryCursor cursor;
-        [SerializeField] private Vector2Int size;
         [SerializeField] private GridInventoryView view;
         [SerializeField] private GridItemPresenter itemPresenterPrefab;
+        [SerializeField] private Transform itemParent;
         private GridInventory model;
         
-
-        private void Awake()
+        /// <summary>
+        /// モデルを読み込み、Viewを構築する。
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="cursor"></param>
+        public void Initialize(GridInventory model, GridInventoryCursor cursor)
         {
-            model = new GridInventory(size);
-            view.SetSize(size);
+            Cursor = cursor;
+            this.model = model;
+            view.SetSize(model.Size);
+            ReloadModel(model);
 
             _ = view.OnDropAsObservable()
                 .Subscribe(eventData => cursor.DropToInventory(this))
@@ -39,37 +44,50 @@ namespace yumehiko.Item.GridInventorySystem
                 .AddTo(this);
         }
 
-
         /// <summary>
-        /// このインベントリに、無からアイテムを追加する。
+        /// モデルを読み込んで、Viewを再構築する。
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="slotPosition"></param>
-        public void GenerateItem(GridItem item, Vector2Int slotPosition)
+        /// <param name="model"></param>
+        public void ReloadModel(GridInventory model)
         {
-            //配置できないならエラー。
-            if (!model.CanPlace(slotPosition, item))
+            this.model = model;
+            view.SetSize(model.Size);
+
+            //すべてのアイテム実体を破棄。
+            foreach(Transform item in itemParent)
             {
-                throw new System.Exception("ここには配置できない。");
+                Destroy(item.gameObject);
             }
 
-            itemPresenterPrefab.Instantiate(item, this, slotPosition);
-            model.AddItem(item, slotPosition);
+            //すべてのアイテムモデルを実体化。
+            foreach(GridItem item in model.Items)
+            {
+                InstantiateItem(item);
+            }
         }
 
         /// <summary>
-        /// このインベントリから、指定したアイテムを削除する。
+        /// このインベントリのモデルから、指定したアイテムを削除する。
         /// </summary>
         /// <param name="item"></param>
-        public void RemoveItem(GridItem item, Vector2Int slotPosition)
-        {
-            model.RemoveItem(item, slotPosition);
-        }
+        public void RemoveItemAtModel(GridItem item) => model.RemoveItem(item);
 
         public Vector2Int GetSlotByPoint(Vector2 point) => view.GetSlotByPoint(point);
         public Vector2 GetPointBySlot(Vector2Int slotPosition) => view.GetPointBySlot(slotPosition);
         public bool CanPlace(Vector2Int slotPosition, GridItem item) => model.CanPlace(slotPosition, item);
         public bool CanPlaceWithSize(Vector2Int slotPosition, GridItem item, out Vector2Int size) => model.CanPlaceWithSize(slotPosition, item, out size);
         public void AddItem(GridItem item, Vector2Int slotPosition) => model.AddItem(item, slotPosition);
+
+
+        private void InstantiateItem(GridItem item)
+        {
+            if(item == null)
+            {
+                return; 
+            }
+
+            GridItemPresenter instance = Instantiate(itemPresenterPrefab, itemParent);
+            instance.Initialize(item, this);
+        }
     }
 }

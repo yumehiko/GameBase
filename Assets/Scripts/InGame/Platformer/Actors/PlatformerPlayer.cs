@@ -15,6 +15,7 @@ namespace yumehiko.Platformer
 
         [SerializeField] private Walk2D walk;
         [SerializeField] private ActorAnimation actorAnimation;
+        [SerializeField] private Interactor2D interactor;
         private bool isInvisible = false;
         private BoolReactiveProperty isDied = new BoolReactiveProperty(false);
 
@@ -23,6 +24,7 @@ namespace yumehiko.Platformer
         {
             walk.Initialize();
             actorAnimation.Initialize(this, walk, walk, walk.Grounded, walk.BodyDirection);
+            interactor.Initialize();
 
             SubscribeKeys();
 
@@ -36,6 +38,7 @@ namespace yumehiko.Platformer
         {
             walk.Dispose();
             actorAnimation.Dispose();
+            interactor.Dispose();
         }
 
 
@@ -95,6 +98,12 @@ namespace yumehiko.Platformer
                 .Where(_ => ReactiveInput.OnMove.Value.y <= -0.9f)
                 .Where(isOn => isOn)
                 .Subscribe(_ => walk.Grounded.DownPlatform())
+                .AddTo(this);
+
+            ReactiveInput.OnMaru
+                .Where(_ => CanControl)
+                .Where(isOn => isOn)
+                .Subscribe(_ => interactor.TryInteract())
                 .AddTo(this);
 
             ReactiveInput.OnMove

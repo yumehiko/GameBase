@@ -2,7 +2,7 @@
 using UnityEngine;
 using UniRx;
 
-namespace yumehiko.Item.GridInventorySystem
+namespace yumehiko.ItemSystem.GridInventory
 {
     /// <summary>
     /// スロット。アイテムなどが配置できるひとつのマス。

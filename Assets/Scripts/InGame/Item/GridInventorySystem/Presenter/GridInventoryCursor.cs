@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UniRx;
 
-namespace yumehiko.Item.GridInventorySystem
+namespace yumehiko.ItemSystem.GridInventory
 {
     public class GridInventoryCursor : UIBehaviour
     {
@@ -79,7 +79,7 @@ namespace yumehiko.Item.GridInventorySystem
                 return;
             }
 
-            DraggingItem.Move(dropTarget, dropSlotPosition);
+            DraggingItem.MoveTo(dropTarget, dropSlotPosition);
             dropTarget.AddItem(DraggingItem.Model, dropSlotPosition);
         }
 

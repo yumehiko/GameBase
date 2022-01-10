@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UniRx;
 using UnityEngine.EventSystems;
 
-namespace yumehiko.Item.GridInventorySystem
+namespace yumehiko.ItemSystem.GridInventory
 {
     public class GridItemView : Selectable, IBeginDragHandler, IEndDragHandler, IDragHandler, IDropHandler
     {

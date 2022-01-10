@@ -4,7 +4,7 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 
-namespace yumehiko.Item.GridInventorySystem
+namespace yumehiko.ItemSystem.GridInventory
 {
     public class GridItemPresenter : MonoBehaviour
     {
@@ -14,36 +14,34 @@ namespace yumehiko.Item.GridInventorySystem
 
         [SerializeField] private GridItemView view;
         private GridItem model;
-        Vector2Int currentSlotPosition;
 
-        public void Instantiate(GridItem itemData, GridInventoryPresenter inventory, Vector2Int slotPosition)
+
+        public void Initialize(GridItem itemData, GridInventoryPresenter inventory)
         {
-            GridItemPresenter instance = Instantiate(this, inventory.transform);
-            Vector2 localPosition = new Vector2(slotPosition.x, -slotPosition.y) * GridInventory.SlotSize;
-            instance.transform.localPosition = localPosition;
-            instance.SetItemData(itemData, inventory, slotPosition);
+            Vector2 localScreenPosition = new Vector2(itemData.SlotPosition.x, -itemData.SlotPosition.y) * GridInventory.SlotSize;
+            transform.localPosition = localScreenPosition;
+            SetItemData(itemData, inventory);
         }
 
         /// <summary>
-        /// このアイテムを、指定したインベントリのスロットに移動させる。
+        /// このアイテムを、指定したインベントリの指定したスロットに移動させる。
         /// </summary>
-        public void Move(GridInventoryPresenter inventory, Vector2Int slotPosition)
+        public void MoveTo(GridInventoryPresenter inventory, Vector2Int slotPosition)
         {
+            Inventory.RemoveItemAtModel(model);
+            model.Move(slotPosition);
             view.Move(inventory.transform, slotPosition);
-            Inventory.RemoveItem(model, currentSlotPosition);
             Inventory = inventory;
-            currentSlotPosition = slotPosition;
         }
 
         public void ChangeColorByMergeResult(MergeCheckResult result) => view.ChangeColorByMergeResult(result);
         public void ResetColorToWhite() => view.ResetColorToWhite();
 
 
-        private void SetItemData(GridItem itemData, GridInventoryPresenter inventory, Vector2Int slotPosition)
+        private void SetItemData(GridItem itemData, GridInventoryPresenter inventory)
         {
             Inventory = inventory;
             model = itemData;
-            currentSlotPosition = slotPosition;
             view.SetView(itemData.Sprite, itemData.Stack.Value, itemData.Size);
 
             GridInventoryCursor Cursor = Inventory.Cursor;
@@ -81,7 +79,7 @@ namespace yumehiko.Item.GridInventorySystem
 
         private void Remove()
         {
-            Inventory.RemoveItem(model, currentSlotPosition);
+            Inventory.RemoveItemAtModel(model);
             Destroy(gameObject);
         }
     }

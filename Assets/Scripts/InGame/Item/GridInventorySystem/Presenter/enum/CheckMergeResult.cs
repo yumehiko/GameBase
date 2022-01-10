@@ -1,4 +1,4 @@
-﻿namespace yumehiko.Item.GridInventorySystem
+﻿namespace yumehiko.ItemSystem.GridInventory
 {
     public enum MergeCheckResult
     {
