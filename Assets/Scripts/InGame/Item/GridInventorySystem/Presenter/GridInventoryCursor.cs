@@ -21,6 +21,12 @@ namespace yumehiko.ItemSystem.GridInventory
         private ReactiveProperty<MergeCheckResult> currentMergeCheckResult = new ReactiveProperty<MergeCheckResult>();
         private System.IDisposable cursorUpdateObserver;
 
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            EndDrag();
+        }
+
 
         public void StartDrag(GridItemPresenter gridItem, PointerEventData eventData)
         {
@@ -36,7 +42,7 @@ namespace yumehiko.ItemSystem.GridInventory
         public void EndDrag()
         {
             DraggingItem = null;
-            cursorUpdateObserver.Dispose();
+            cursorUpdateObserver?.Dispose();
             isDragging.Value = false;
             Cursor.visible = true;
         }
@@ -52,8 +58,8 @@ namespace yumehiko.ItemSystem.GridInventory
                 return;
             }
 
-            //IDが異なるならスタック不能なので、無視。
-            if (DraggingItem.Item.ID != dropTarget.Item.ID)
+            //異なるアイテムはスタック不能なので、無視。
+            if (DraggingItem.Model.Idea != dropTarget.Model.Idea)
             {
                 return;
             }
@@ -136,14 +142,14 @@ namespace yumehiko.ItemSystem.GridInventory
                 return MergeCheckResult.SameItem;
             }
 
-            //同IDのアイテムではない場合
-            if (mergeTarget.Item.ID != DraggingItem.Item.ID)
+            //同種のアイテムではない場合
+            if (mergeTarget.Model.Idea != DraggingItem.Model.Idea)
             {
                 return MergeCheckResult.Forbid;
             }
 
             //すでに最大量の場合
-            if (mergeTarget.Model.MaxStack == mergeTarget.Model.Stack.Value)
+            if (mergeTarget.Model.Idea.MaxStack == mergeTarget.Model.Stack.Value)
             {
                 return MergeCheckResult.Forbid;
             }

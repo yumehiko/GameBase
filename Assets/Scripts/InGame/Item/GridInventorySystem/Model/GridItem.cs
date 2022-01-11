@@ -11,42 +11,32 @@ namespace yumehiko.ItemSystem.GridInventory
     public class GridItem
     {
         /// <summary>
-        /// アイテム。
+        /// アイテムのイデア。
         /// </summary>
-        public Item Item { get; }
+        public GridItemIdea Idea;
 
         /// <summary>
-        /// 数量。
+        /// 現在の数量。
         /// </summary>
-        public ReadOnlyReactiveProperty<int> Stack => stack.ToReadOnlyReactiveProperty();
-
-        public int MaxStack { get; }
-
-        /// <summary>
-        /// 占有するスロットサイズ。
-        /// </summary>
-        public Vector2Int Size { get; }
-
-        /// <summary>
-        /// 表示用のスプライト。
-        /// </summary>
-        public Sprite Sprite { get; }
+        public IReadOnlyReactiveProperty<int> Stack => stack;
 
         /// <summary>
         /// 現在のスロット上の座標。
-        /// TODO:ここに記録せず、Inventory側で管理できるように目録クラスを作る。
         /// </summary>
         public Vector2Int SlotPosition { get; private set; }
 
+        /// <summary>
+        /// アイテムのサイズ。
+        /// </summary>
+        public Vector2Int Size => Idea.Size;
+
         private IntReactiveProperty stack;
 
-        public GridItem(Item item, int amount, int maxStack, Sprite sprite, Vector2Int size, Vector2Int slotPosition)
+
+        public GridItem(GridItemIdea idea, int amount, Vector2Int slotPosition)
         {
-            Item = item;
+            Idea = idea;
             stack = new IntReactiveProperty(amount);
-            MaxStack = maxStack;
-            Size = size;
-            Sprite = sprite;
             SlotPosition = slotPosition;
         }
 
@@ -57,15 +47,16 @@ namespace yumehiko.ItemSystem.GridInventory
         /// <returns>スタックをマージした結果、最大スタック量をあふれたあまりの値。</returns>
         public int TryMergeStack(GridItem target)
         {
-            if (Item.ID != target.Item.ID)
+            //イデアが異なるなら、それは異なるものとみなす。
+            if (Idea != target.Idea)
             {
                 throw new System.Exception("異なるアイテムをマージしようとした。");
             }
 
             int mergeSize = stack.Value += target.stack.Value;
-            stack.Value = Mathf.Min(mergeSize, MaxStack);
+            stack.Value = Mathf.Min(mergeSize, Idea.MaxStack);
 
-            return mergeSize - MaxStack;
+            return mergeSize - Idea.MaxStack;
         }
 
         /// <summary>

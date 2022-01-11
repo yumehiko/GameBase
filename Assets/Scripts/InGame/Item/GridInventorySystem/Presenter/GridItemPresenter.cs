@@ -9,7 +9,7 @@ namespace yumehiko.ItemSystem.GridInventory
     public class GridItemPresenter : MonoBehaviour
     {
         public GridItem Model => model;
-        public Item Item => model.Item;
+        public GridItemIdea Idea => model.Idea;
         public GridInventoryPresenter Inventory { get; private set; }
 
         [SerializeField] private GridItemView view;
@@ -42,7 +42,7 @@ namespace yumehiko.ItemSystem.GridInventory
         {
             Inventory = inventory;
             model = itemData;
-            view.SetView(itemData.Sprite, itemData.Stack.Value, itemData.Size);
+            view.SetView(itemData.Idea.Sprite, itemData.Stack.Value, itemData.Size);
 
             GridInventoryCursor Cursor = Inventory.Cursor;
 

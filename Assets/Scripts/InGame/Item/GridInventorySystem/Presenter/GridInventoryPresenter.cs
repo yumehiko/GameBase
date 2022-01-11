@@ -75,7 +75,7 @@ namespace yumehiko.ItemSystem.GridInventory
         public Vector2Int GetSlotByPoint(Vector2 point) => view.GetSlotByPoint(point);
         public Vector2 GetPointBySlot(Vector2Int slotPosition) => view.GetPointBySlot(slotPosition);
         public bool CanPlace(Vector2Int slotPosition, GridItem item) => model.CanPlace(slotPosition, item);
-        public bool CanPlaceWithSize(Vector2Int slotPosition, GridItem item, out Vector2Int size) => model.CanPlaceWithSize(slotPosition, item, out size);
+        public bool CanPlaceWithSize(Vector2Int slotPosition, GridItem item, out Vector2Int size) => model.CanPlaceWithMaskSize(slotPosition, item, out size);
         public void AddItem(GridItem item, Vector2Int slotPosition) => model.AddItem(item, slotPosition);
 
 

@@ -35,7 +35,7 @@ namespace yumehiko.ItemSystem.GridInventory
         private void EnableGuide()
         {
             image.enabled = true;
-            image.sprite = cursor.DraggingItem.Model.Sprite;
+            image.sprite = cursor.DraggingItem.Idea.Sprite;
             image.SetNativeSize();
             transform.position = cursor.Position.Value + halfSlotOffset;
 

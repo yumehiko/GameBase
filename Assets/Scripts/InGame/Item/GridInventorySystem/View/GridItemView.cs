@@ -19,6 +19,12 @@ namespace yumehiko.ItemSystem.GridInventory
         [SerializeField] private Image boxImage;
         [SerializeField] private Text stackAmountText;
 
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            ResetColorToWhite();
+        }
+
         public void OnBeginDrag(PointerEventData eventData)
         {
             boxImage.raycastTarget = false;

@@ -37,6 +37,18 @@ namespace yumehiko.ItemSystem.GridInventory
         }
 
         /// <summary>
+        /// ScriptableObjectを元にアイテムを追加する。
+        /// </summary>
+        /// <param name="itemObject"></param>
+        /// <param name="amount"></param>
+        /// <param name="slotPosition"></param>
+        public void AddItemBasedObject(GridItemIdea itemObject, int amount, Vector2Int slotPosition)
+        {
+            GridItem item = new GridItem(itemObject, amount, slotPosition);
+            AddItem(item, slotPosition);
+        }
+
+        /// <summary>
         /// アイテムをスロットに追加する。
         /// </summary>
         /// <param name="slotPosition">配置する座標（左上原点）。</param>
@@ -137,7 +149,7 @@ namespace yumehiko.ItemSystem.GridInventory
         /// <param name="item"></param>
         /// <param name="maskedSize"></param>
         /// <returns></returns>
-        public bool CanPlaceWithSize(Vector2Int slotPosition, GridItem item, out Vector2Int maskedSize)
+        public bool CanPlaceWithMaskSize(Vector2Int slotPosition, GridItem item, out Vector2Int maskedSize)
         {
             //占有物の左端または上端がポケットサイズをはみでるなら、false。
             if (slotPosition.x < 0 || slotPosition.y < 0)
