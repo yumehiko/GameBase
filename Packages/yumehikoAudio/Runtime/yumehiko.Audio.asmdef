@@ -1,9 +1,9 @@
 {
     "name": "yumehikoAudio",
     "references": [
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
-        "GUID:b29dcadcd72d54045aac70918f7eb281",
-        "GUID:fc9afe3006643df439c9904758b888a4"
+        "UniRx",
+        "yumehiko.Resident",
+        "DOTween.Modules"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
