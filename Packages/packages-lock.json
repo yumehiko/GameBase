@@ -181,6 +181,12 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "yumehiko.audio": {
+      "version": "file:yumehikoAudio",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "yumehiko.resident": {
       "version": "file:yumehikoResident",
       "depth": 0,
