@@ -4,20 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using DG.Tweening;
-using yumehiko.Resident;
 
-namespace yumehiko.UI
+namespace yumehiko.Resident
 {
     /// <summary>
     /// シーン間遷移時のアニメーション（フェードアウトなど）
     /// </summary>
-    public class SceneTransitionAnimation : MonoBehaviour
+    public class SceneTransitionController : MonoBehaviour
     {
         //TODO: 黒駒以外の遷移を追加するなら、enumが必要だろう。
         [SerializeField] private Image kuroKoma;
 
         private Sequence transition;
-
 
         private void Start()
         {

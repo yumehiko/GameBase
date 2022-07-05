@@ -6,7 +6,7 @@ using UniRx;
 using yumehiko.Resident;
 using yumehiko.Resident.Control;
 
-namespace yumehiko.UI
+namespace yumehiko.Resident
 {
     /// <summary>
     /// ポーズメニュー。ポーズキーで停止し、メニューを表示する。

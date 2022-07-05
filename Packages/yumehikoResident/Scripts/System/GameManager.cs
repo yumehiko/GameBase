@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
-namespace yumehiko
+namespace yumehiko.Resident
 {
     public class GameManager : MonoBehaviour
     {

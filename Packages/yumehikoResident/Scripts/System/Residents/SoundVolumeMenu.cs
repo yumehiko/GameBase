@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.Audio;
 using UniRx;
 
-namespace yumehiko.UI
+namespace yumehiko.Resident
 {
     /// <summary>
     /// 音量調節のメニュー。
