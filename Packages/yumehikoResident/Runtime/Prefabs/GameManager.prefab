@@ -293,6 +293,7 @@ GameObject:
   - component: {fileID: 9106222906410755298}
   - component: {fileID: 9106222906410755297}
   - component: {fileID: 9106222906410755325}
+  - component: {fileID: 4729457633662516433}
   m_Layer: 5
   m_Name: SceneTransition
   m_TagString: Untagged
@@ -390,6 +391,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48b3a6f6d7ed4475d8ba5cd92eec5122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultTransition: {fileID: 4729457633662516433}
+--- !u!114 &4729457633662516433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9106222906410755296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f965187191ce2465fa9169a4194acf6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   kuroKoma: {fileID: 9106222907101132782}

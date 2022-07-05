@@ -12,10 +12,8 @@ namespace yumehiko.Resident
     /// </summary>
     public class SceneTransitionController : MonoBehaviour
     {
-        //TODO: 黒駒以外の遷移を追加するなら、enumが必要だろう。
-        [SerializeField] private Image kuroKoma;
-
-        private Sequence transition;
+        [SerializeField] private FadeTransition defaultTransition;
+        private ITransition transition;
 
         private void Start()
         {
@@ -25,41 +23,20 @@ namespace yumehiko.Resident
                 DontDestroyOnLoad(gameObject);
             }
 
-            FadeIn(0.5f);
-            LoadManager.OnLoadWaitStart.Subscribe(duration => FadeOut(duration)).AddTo(this);
-            LoadManager.OnLoadComplete.Subscribe(duration => FadeIn(duration)).AddTo(this);
-        }
+            transition = defaultTransition;
 
-
-        /// <summary>
-        /// フェードアウト（徐々に暗くなり、見えなくなる）。
-        /// </summary>
-        /// <param name="duration"></param>
-        private void FadeOut(float duration)
-        {
-            transition?.Kill();
-
-            transition = DOTween.Sequence();
-            transition.OnStart(() => kuroKoma.enabled = true);
-            transition.Append(kuroKoma.DOFade(1.0f, duration));
-            transition.SetUpdate(true);
-            transition.SetLink(gameObject);
+            transition.End(0.5f);
+            _ = LoadManager.OnLoadWaitStart.Subscribe(duration => transition.Begin(duration)).AddTo(this);
+            _ = LoadManager.OnLoadComplete.Subscribe(duration => transition.End(duration)).AddTo(this);
         }
 
         /// <summary>
-        /// フェードイン（徐々に明るくなり、見えるようになる）。
+        /// 遷移アニメーションを指定する。
         /// </summary>
-        /// <param name="duration"></param>
-        private void FadeIn(float duration)
+        /// <param name="transition"></param>
+        public void SetTransitionAnimation(ITransition transition)
         {
-            transition?.Kill();
-
-            transition = DOTween.Sequence();
-            transition.OnStart(() => kuroKoma.enabled = true);
-            transition.Append(kuroKoma.DOFade(0.0f, duration));
-            transition.OnComplete(() => kuroKoma.enabled = false);
-            transition.SetUpdate(true);
-            transition.SetLink(gameObject);
+            this.transition = transition;
         }
     }
 }
