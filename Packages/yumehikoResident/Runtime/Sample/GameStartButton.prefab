@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6522007729557395246}
   - component: {fileID: 6522007729557395247}
   m_Layer: 0
-  m_Name: InitScene
+  m_Name: GameStartButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
