@@ -20,10 +20,12 @@ namespace yumehiko.Resident
         private readonly string aKeyMusicVolume = "MusicVolume";
         private readonly string aKeySoundVolume = "SoundVolume";
 
-        private void Reset()
+        [ContextMenu("ConnectPauseMenu")]
+        public void ConnectPauseMenu()
         {
             //ポーズメニューとひもづける。
             pauseMenu = GameObject.Find("PauseMenu").GetComponent<PauseMenu>();
+            Debug.Log("Connect with Pause Menu");
         }
 
         private void Start()
