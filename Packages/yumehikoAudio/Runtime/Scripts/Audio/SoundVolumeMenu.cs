@@ -22,7 +22,8 @@ namespace yumehiko.Resident
 
         private void Reset()
         {
-            pauseMenu = transform.parent.GetComponent<PauseMenu>();
+            //ポーズメニューとひもづける。
+            pauseMenu = GameObject.Find("PauseMenu").GetComponent<PauseMenu>();
         }
 
         private void Start()
