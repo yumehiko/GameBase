@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using yumehiko.Resident;
-using yumehiko.Resident.Control;
 
 namespace yumehiko.Resident
 {
@@ -32,10 +31,14 @@ namespace yumehiko.Resident
                 .Subscribe(isTrue => SwitchPanel(isTrue))
                 .AddTo(this);
 
+            /*
+            //ポーズキーを購読するサンプル。
+            //実際の一時停止は、この例のようにインプットから呼び出す。
             ReactiveInput.OnPause
                 .Where(isTrue => isTrue)
                 .Subscribe(_ => PauseManager.SwitchPause())
                 .AddTo(this);
+            */
         }
 
         private void SwitchPanel(bool isOn)

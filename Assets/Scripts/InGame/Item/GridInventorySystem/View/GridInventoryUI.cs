@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using yumehiko.Resident.Control;
 
 namespace yumehiko.ItemSystem.GridInventory
 {
@@ -25,10 +24,6 @@ namespace yumehiko.ItemSystem.GridInventory
             var playerInventorySize = new Vector2Int(7, 13);
             var model = new GridInventory(playerInventorySize);
             playerInventory.Initialize(model, cursor);
-
-            ReactiveInput.OnInventory
-                .Where(isOn => isOn)
-                .Subscribe(_ => ToggleOpenUI());
         }
 
         public void ToggleOpenUI()
