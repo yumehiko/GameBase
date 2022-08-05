@@ -20,6 +20,10 @@ namespace yumehiko.Resident
         private readonly string aKeyMusicVolume = "MusicVolume";
         private readonly string aKeySoundVolume = "SoundVolume";
 
+        private void Reset()
+        {
+            pauseMenu = transform.parent.GetComponent<PauseMenu>();
+        }
 
         private void Start()
         {
