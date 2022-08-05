@@ -39,6 +39,12 @@ namespace yumehiko.Resident
         private static Subject<float> onLoadComplete = new Subject<float>();
         private static Tween loadTween;
 
+        static LoadManager()
+        {
+            //一番最初に読み込み完了判定を出す。
+            onLoadComplete.OnNext(0.0f);
+        }
+
 
         /// <summary>
         /// シーンを再読み込み。
