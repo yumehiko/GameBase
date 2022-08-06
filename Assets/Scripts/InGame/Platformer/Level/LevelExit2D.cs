@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
-namespace yumehiko
+namespace yumehiko.Platformer
 {
     /// <summary>
     /// レベルの出口。プレイヤーが侵入したとき、このレベルをクリアしたとみなす。

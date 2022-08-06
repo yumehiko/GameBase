@@ -8,10 +8,14 @@ namespace yumehiko
 {
     public class LoadDebug : MonoBehaviour
     {
-        private void Awake()
+        private void Start()
         {
             LoadManager.OnLoadComplete
                 .Subscribe(_ => Debug.Log("LoadComplete"))
+                .AddTo(this);
+
+            LoadManager.OnLoadTransitionEnd
+                .Subscribe(_ => Debug.Log("TransitionEnd"))
                 .AddTo(this);
         }
     }

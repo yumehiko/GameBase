@@ -25,8 +25,7 @@ namespace yumehiko.Resident
 
             transition = defaultTransition;
 
-            transition.End(0.5f);
-            _ = LoadManager.OnLoadWaitStart.Subscribe(duration => transition.Begin(duration)).AddTo(this);
+            _ = LoadManager.OnLoadTransitionStart.Subscribe(duration => transition.Begin(duration)).AddTo(this);
             _ = LoadManager.OnLoadComplete.Subscribe(duration => transition.End(duration)).AddTo(this);
         }
 

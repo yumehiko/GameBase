@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
 using UniRx;
@@ -15,19 +16,25 @@ namespace yumehiko.Resident
     public static class LoadManager
     {
         /// <summary>
-        /// ロード準備開始。また、実際のロードを開始するまでの遅延。
+        /// 画面遷移開始時。値は実際のロードまでの秒数。
         /// </summary>
-        public static System.IObservable<float> OnLoadWaitStart => onLoadWaitStart;
+        public static IObservable<float> OnLoadTransitionStart => onLoadTransitionStart;
 
         /// <summary>
-        /// ロード完了時。また、ロード完了後からロードが明けたとするまでの時間。
+        /// ロード完了時。値は画面遷移終了までの時間。
+        /// MEMO：awaitやstartでは受け取れないっぽい。
         /// </summary>
-        public static System.IObservable<float> OnLoadComplete => onLoadComplete;
+        public static IObservable<float> OnLoadComplete => onLoadComplete;
+
+        /// <summary>
+        /// 画面遷移完了時。
+        /// </summary>
+        public static IObservable<Unit> OnLoadTransitionEnd => onLoadTransitionEnd;
 
         /// <summary>
         /// 現在ロード中か。
         /// </summary>
-        public static bool IsSceneSwapping => loadTween.IsActive();
+        public static bool IsSceneSwapping => isLoading;
 
         /// <summary>
         /// 現在アクティブなシーンのID。
@@ -35,58 +42,43 @@ namespace yumehiko.Resident
         public static int CurrentSceneID => SceneManager.GetActiveScene().buildIndex;
 
 
-        private static Subject<float> onLoadWaitStart = new Subject<float>();
+        private static Subject<float> onLoadTransitionStart = new Subject<float>();
         private static Subject<float> onLoadComplete = new Subject<float>();
-        private static Tween loadTween;
+        private static Subject<Unit> onLoadTransitionEnd = new Subject<Unit>();
 
-        static LoadManager()
-        {
-            //一番最初に読み込み完了判定を出す。
-            onLoadComplete.OnNext(0.0f);
-        }
+        private static bool isLoading = false;
+
 
 
         /// <summary>
         /// シーンを再読み込み。
         /// </summary>
-        /// <param name="delay">再読み込みまでの遅延。</param>
+        /// <param name="beginDelay">再読み込みまでの遅延。</param>
         /// <param name="endDelay">読み込み明けの遅延。</param>
-        public static void RequireResetScene(float delay = 0.5f, float endDelay = 0.5f)
+        public static void RequireResetScene(float beginDelay = 0.5f, float endDelay = 0.5f)
         {
-            RequireLoadScene(SceneManager.GetActiveScene().buildIndex, delay, endDelay);
+            LoadScene(SceneManager.GetActiveScene().buildIndex, beginDelay, endDelay).Forget();
         }
 
         /// <summary>
         /// 指定したBuild IDのシーンをロードを要求する。
         /// </summary>
-        /// <param name="delay">再読み込みまでの遅延。</param>
+        /// <param name="beginDelay">再読み込みまでの遅延。</param>
         /// <param name="endDelay">読み込み明けの遅延。</param>
-        public static void RequireLoadScene(int buildID, float delay = 0.5f, float endDelay = 0.5f)
+        public static void RequireLoadScene(int buildID, float beginDelay = 0.5f, float endDelay = 0.5f)
         {
-            if (loadTween.IsActive())
-            {
-                return;
-            }
-
-            onLoadWaitStart.OnNext(delay);
-            loadTween = DOVirtual.DelayedCall(delay, () => LoadScene(buildID, endDelay).Forget());
+            LoadScene(buildID, beginDelay, endDelay).Forget();
         }
 
         /// <summary>
         /// 指定した名前のシーンのロードを要求する。
         /// </summary>
         /// <param name="sceneName"></param>
-        /// <param name="delay"></param>
+        /// <param name="beginDelay"></param>
         /// <param name="endDelay"></param>
-        public static void RequireLoadScene(string sceneName, float delay = 0.5f, float endDelay = 0.5f)
+        public static void RequireLoadScene(string sceneName, float beginDelay = 0.5f, float endDelay = 0.5f)
         {
-            if (loadTween.IsActive())
-            {
-                return;
-            }
-
-            onLoadWaitStart.OnNext(delay);
-            loadTween = DOVirtual.DelayedCall(delay, () => LoadScene(sceneName, endDelay).Forget());
+            LoadScene(sceneName, beginDelay, endDelay).Forget();
         }
 
         /// <summary>
@@ -94,10 +86,25 @@ namespace yumehiko.Resident
         /// </summary>
         /// <param name="buildID">読み込むシーンのID。</param>
         /// <param name="endDelay">読み込み明けの遅延。</param>
-        private static async UniTask LoadScene(int buildID, float endDelay)
+        private static async UniTask LoadScene(int buildID, float beginDelay, float endDelay)
         {
+            if (isLoading)
+            {
+                return;
+            }
+
+            isLoading = true;
+
+            onLoadTransitionStart.OnNext(beginDelay);
+            await UniTask.Delay(TimeSpan.FromSeconds(beginDelay));
+
             await SceneManager.LoadSceneAsync(buildID);
             onLoadComplete.OnNext(endDelay);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(endDelay));
+            onLoadTransitionEnd.OnNext(Unit.Default);
+
+            isLoading = false;
         }
 
         /// <summary>
@@ -105,10 +112,25 @@ namespace yumehiko.Resident
         /// </summary>
         /// <param name="sceneName"></param>
         /// <param name="endDelay"></param>
-        private static async UniTask LoadScene(string sceneName, float endDelay)
+        private static async UniTask LoadScene(string sceneName, float beginDelay, float endDelay)
         {
-            await SceneManager.LoadSceneAsync(sceneName);
+            if (isLoading)
+            {
+                return;
+            }
+
+            isLoading = true;
+
+            onLoadTransitionStart.OnNext(beginDelay);
+            await UniTask.Delay(TimeSpan.FromSeconds(beginDelay));
+
+            await SceneManager.LoadSceneAsync(sceneName).ToUniTask();
             onLoadComplete.OnNext(endDelay);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(endDelay));
+            onLoadTransitionEnd.OnNext(Unit.Default);
+
+            isLoading = false;
         }
     }
 

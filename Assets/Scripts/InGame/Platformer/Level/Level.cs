@@ -5,13 +5,22 @@ using UniRx;
 using yumehiko.Resident;
 using DG.Tweening;
 
-namespace yumehiko
+namespace yumehiko.Platformer
 {
     /// <summary>
     /// レベル。あるシーンの塊を一区切りのゲーム的課題とみなしたもの。ステージ。
     /// </summary>
     public class Level : MonoBehaviour
     {
+        [SerializeField] private PlatformerPlayer player;
+        private void Awake()
+        {
+            player.IsDied
+                .Where(isTrue => isTrue)
+                .Subscribe(_ => RelordLevel())
+                .AddTo(this);
+        }
+
         /// <summary>
         /// このレベルをクリアする。
         /// </summary>

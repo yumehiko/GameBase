@@ -27,7 +27,7 @@ namespace yumehiko.Resident
 
         static PauseManager()
         {
-            LoadManager.OnLoadWaitStart.Subscribe(_ => ForbidPause());
+            LoadManager.OnLoadTransitionStart.Subscribe(_ => ForbidPause());
             LoadManager.OnLoadComplete.Subscribe(_ => PermitPause());
             LoadManager.OnLoadComplete.Subscribe(_ => Resume());
         }
