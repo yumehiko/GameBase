@@ -6,17 +6,28 @@ namespace yumehiko.Audio
 {
     /// <summary>
     /// 効果音を再生する。
-    /// TODO:機能が貧弱すぎて今のところいらないな。
     /// </summary>
     public class SoundEffect : MonoBehaviour
     {
         [SerializeField] private AudioSource audioSource;
 
-        public void PlayClip(AudioClip clip, float volume = 1.0f, float pitch = 1.0f)
+        /// <summary>
+        /// 指定した効果音を再生する。
+        /// </summary>
+        public void PlayClip(AudioClip clip, float volumeScale = 1.0f, float pitch = 1.0f)
         {
-            audioSource.volume = volume;
+            audioSource.volume = volumeScale;
             audioSource.pitch = pitch;
             audioSource.PlayOneShot(clip);
+        }
+
+        /// <summary>
+        /// 効果音を再生する。複数の候補からランダムに選ぶ。
+        /// </summary>
+        public void PlayClip(List<AudioClip> clips, float volumeScale = 1.0f, float pitch = 1.0f)
+        {
+            AudioClip clip = clips[Random.Range(0, clips.Count)];
+            PlayClip(clip, volumeScale, pitch);
         }
     }
 }
