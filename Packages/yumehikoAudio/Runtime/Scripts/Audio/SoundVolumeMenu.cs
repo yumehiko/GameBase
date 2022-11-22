@@ -2,8 +2,9 @@
 using UnityEngine.UI;
 using UnityEngine.Audio;
 using UniRx;
+using yumehiko.Resident;
 
-namespace yumehiko.Resident
+namespace yumehiko.Audio
 {
     /// <summary>
     /// 音量調節のメニュー。

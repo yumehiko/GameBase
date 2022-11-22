@@ -25,7 +25,10 @@ namespace yumehiko.Audio.Music
         private void Awake()
         {
             MusicManager.InstallSources(this);
-            DontDestroyOnLoad(this);
+            if (transform.parent == null)
+            {
+                DontDestroyOnLoad(this);
+            }
         }
 
         /// <summary>
