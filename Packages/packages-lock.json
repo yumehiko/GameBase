@@ -198,10 +198,7 @@
       "version": "file:yumehikoResident",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {
-        "com.cysharp.unitask": "2.2.5",
-        "com.neuecc.unirx": "7.1.0"
-      }
+      "dependencies": {}
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

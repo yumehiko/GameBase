@@ -54,9 +54,9 @@ namespace yumehiko.Resident
         /// </summary>
         /// <param name="beginDelay">再読み込みまでの遅延。</param>
         /// <param name="endDelay">読み込み明けの遅延。</param>
-        public static void RequireResetScene(float beginDelay = 0.5f, float endDelay = 0.5f)
+        public static async UniTask RequireResetScene(float beginDelay = 0.5f, float endDelay = 0.5f)
         {
-            LoadScene(SceneManager.GetActiveScene().buildIndex, beginDelay, endDelay).Forget();
+            await LoadScene(SceneManager.GetActiveScene().buildIndex, beginDelay, endDelay);
         }
 
         /// <summary>
@@ -64,9 +64,9 @@ namespace yumehiko.Resident
         /// </summary>
         /// <param name="beginDelay">再読み込みまでの遅延。</param>
         /// <param name="endDelay">読み込み明けの遅延。</param>
-        public static void RequireLoadScene(int buildID, float beginDelay = 0.5f, float endDelay = 0.5f)
+        public static async UniTask RequireLoadScene(int buildID, float beginDelay = 0.5f, float endDelay = 0.5f)
         {
-            LoadScene(buildID, beginDelay, endDelay).Forget();
+            await LoadScene(buildID, beginDelay, endDelay);
         }
 
         /// <summary>
@@ -75,9 +75,9 @@ namespace yumehiko.Resident
         /// <param name="sceneName"></param>
         /// <param name="beginDelay"></param>
         /// <param name="endDelay"></param>
-        public static void RequireLoadScene(string sceneName, float beginDelay = 0.5f, float endDelay = 0.5f)
+        public static async UniTask RequireLoadScene(string sceneName, float beginDelay = 0.5f, float endDelay = 0.5f)
         {
-            LoadScene(sceneName, beginDelay, endDelay).Forget();
+            await LoadScene(sceneName, beginDelay, endDelay);
         }
 
         /// <summary>

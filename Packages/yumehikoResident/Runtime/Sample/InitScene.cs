@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using yumehiko.Resident;
+using Cysharp.Threading.Tasks;
 
 namespace yumehiko
 {
@@ -18,7 +19,7 @@ namespace yumehiko
         {
             _ = startButton.OnClickAsObservable()
                 .First()
-                .Subscribe(_ => LoadManager.RequireLoadScene(1))
+                .Subscribe(_ => LoadManager.RequireLoadScene(1).Forget())
                 .AddTo(this);
         }
     }
