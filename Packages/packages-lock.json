@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "50a67d8f419b6cea0398eff6c19cf0bbe11ed609"
     },
+    "com.neuecc.unirx": {
+      "version": "https://github.com/neuecc/UniRx.git?path=Assets/Plugins/UniRx/Scripts",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "284d5c50d3f1ddd9fa7df3d382ea904732a9c2ff"
+    },
     "com.unity.2d.animation": {
       "version": "3.2.17",
       "depth": 0,
@@ -191,7 +198,10 @@
       "version": "file:yumehikoResident",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.cysharp.unitask": "2.2.5",
+        "com.neuecc.unirx": "7.1.0"
+      }
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

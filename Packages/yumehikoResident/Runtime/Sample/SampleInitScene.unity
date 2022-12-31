@@ -283,7 +283,7 @@ PrefabInstance:
     - target: {fileID: 6522007729557395245, guid: 92479a5e3326541578996e00dd04fbc8,
         type: 3}
       propertyPath: m_Name
-      value: InitScene
+      value: GameStartButton
       objectReference: {fileID: 0}
     - target: {fileID: 6522007729557395246, guid: 92479a5e3326541578996e00dd04fbc8,
         type: 3}

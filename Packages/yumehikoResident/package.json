@@ -1,6 +1,6 @@
 {
   "name": "yumehiko.resident",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "displayName": "yume Resident",
   "description": "https://github.com/yumehiko/GameBase.git?path=/Packages/yumehikoResident\nScene Load and Pause System",
   "unity": "2019.4",
@@ -8,5 +8,7 @@
     "name": "yumehiko"
   },
   "dependencies": {
+    "com.cysharp.unitask": "2.2.5",
+    "com.neuecc.unirx": "7.1.0"
   }
 }

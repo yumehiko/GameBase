@@ -22,7 +22,6 @@ namespace yumehiko.Resident
 
         /// <summary>
         /// ロード完了時。値は画面遷移終了までの時間。
-        /// MEMO：awaitやstartでは受け取れないっぽい。
         /// </summary>
         public static IObservable<float> OnLoadComplete => onLoadComplete;
 
@@ -42,9 +41,9 @@ namespace yumehiko.Resident
         public static int CurrentSceneID => SceneManager.GetActiveScene().buildIndex;
 
 
-        private static Subject<float> onLoadTransitionStart = new Subject<float>();
-        private static Subject<float> onLoadComplete = new Subject<float>();
-        private static Subject<Unit> onLoadTransitionEnd = new Subject<Unit>();
+        private static readonly Subject<float> onLoadTransitionStart = new Subject<float>();
+        private static readonly Subject<float> onLoadComplete = new Subject<float>();
+        private static readonly Subject<Unit> onLoadTransitionEnd = new Subject<Unit>();
 
         private static bool isLoading = false;
 
