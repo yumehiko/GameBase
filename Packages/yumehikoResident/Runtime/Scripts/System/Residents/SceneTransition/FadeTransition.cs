@@ -18,7 +18,7 @@ namespace yumehiko.Resident
 
             transition = DOTween.Sequence();
             transition.OnStart(() => kuroKoma.enabled = true);
-            transition.Append(kuroKoma.DOFade(1.0f, duration));
+            transition.Append(kuroKoma.DOFade(1.0f, duration)).SetEase(Ease.OutQuad);
             transition.SetUpdate(true);
             transition.SetLink(gameObject);
         }
@@ -29,7 +29,7 @@ namespace yumehiko.Resident
 
             transition = DOTween.Sequence();
             transition.OnStart(() => kuroKoma.enabled = true);
-            transition.Append(kuroKoma.DOFade(0.0f, duration));
+            transition.Append(kuroKoma.DOFade(0.0f, duration)).SetEase(Ease.InQuad);
             transition.OnComplete(() => kuroKoma.enabled = false);
             transition.SetUpdate(true);
             transition.SetLink(gameObject);
