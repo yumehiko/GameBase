@@ -3,7 +3,8 @@
     "references": [
         "UniRx",
         "yumehiko.Resident",
-        "DOTween.Modules"
+        "DOTween.Modules",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace yumehiko.Audio
 {
@@ -29,6 +31,24 @@ namespace yumehiko.Audio
         {
             AudioClip clip = clips[Random.Range(0, clips.Count)];
             PlayClip(clip, volumeScale, pitch);
+        }
+
+        /// <summary>
+        /// 指定した効果音を再生し、再生が終えるまでawaitする。
+        /// </summary>
+        /// <param name="clip"></param>
+        /// <param name="volumeScale"></param>
+        /// <param name="pitch"></param>
+        /// <returns></returns>
+        public async UniTask PlayClipAsync(AudioClip clip, CancellationToken token, float volumeScale = 1.0f, float pitch = 1.0f)
+        {
+            audioSource.volume = volumeScale;
+            audioSource.pitch = pitch;
+            audioSource.clip = clip;
+            audioSource.Play();
+            await UniTask.WaitUntil(() => audioSource.isPlaying == true, cancellationToken: token);
+            await UniTask.WaitUntil(() => audioSource.isPlaying == false, cancellationToken: token);
+
         }
 
         /// <summary>
