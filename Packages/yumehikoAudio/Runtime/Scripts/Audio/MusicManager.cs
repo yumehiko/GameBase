@@ -43,18 +43,23 @@ namespace yumehiko.Audio.Music
         /// </summary>
         public static bool DependPause { get; private set; } = false;
 
+        /// <summary>
+        /// CombineAudioSourceをインストール済みか。
+        /// </summary>
+        public static bool IsInstalled => combineAudioSource != null;
+
         private static AudioSource mainSource;
         private static AudioSource fadeSource;
         private static CombineAudioSource combineAudioSource;
         private static Sequence crossFadeSequence;
 
-        private static Subject<MusicClip> onStartMusic = new Subject<MusicClip>();
-        private static Subject<Unit> onStopMusic = new Subject<Unit>();
-        private static BoolReactiveProperty isPausing = new BoolReactiveProperty();
+        private static readonly Subject<MusicClip> onStartMusic = new Subject<MusicClip>();
+        private static readonly Subject<Unit> onStopMusic = new Subject<Unit>();
+        private static readonly BoolReactiveProperty isPausing = new BoolReactiveProperty();
+        private static readonly FloatReactiveProperty playTime = new FloatReactiveProperty(0.0f);
         private static CompositeDisposable pauseModeDisposables;
 
         private static Tween clipLengthTween;
-        private static FloatReactiveProperty playTime = new FloatReactiveProperty(0.0f);
 
 
 
@@ -69,8 +74,6 @@ namespace yumehiko.Audio.Music
         /// <param name="combineAudioSource"></param>
         public static void InstallSources(CombineAudioSource combineAudioSource)
         {
-            MusicManager.combineAudioSource?.UnInstall();
-
             MusicManager.combineAudioSource = combineAudioSource;
             mainSource = combineAudioSource.MainSource;
             fadeSource = combineAudioSource.FadeSource;

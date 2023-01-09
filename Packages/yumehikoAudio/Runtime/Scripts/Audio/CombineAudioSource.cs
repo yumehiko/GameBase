@@ -24,11 +24,17 @@ namespace yumehiko.Audio.Music
 
         private void Awake()
         {
-            MusicManager.InstallSources(this);
             if (transform.parent == null)
             {
                 DontDestroyOnLoad(this);
             }
+
+            if (MusicManager.IsInstalled)
+            {
+                return;
+            }
+
+            MusicManager.InstallSources(this);
         }
 
         /// <summary>
