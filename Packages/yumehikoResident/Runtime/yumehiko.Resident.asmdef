@@ -4,7 +4,8 @@
         "UniRx",
         "UniTask",
         "Unity.InputSystem",
-        "DOTween.Modules"
+        "DOTween.Modules",
+        "UniTask.DOTween"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -21,6 +21,8 @@ namespace yumehiko.Resident
             transition.Append(kuroKoma.DOFade(1.0f, duration)).SetEase(Ease.OutQuad);
             transition.SetUpdate(true);
             transition.SetLink(gameObject);
+
+            transition = transition.Play();
         }
 
         public void End(float duration)
@@ -33,6 +35,8 @@ namespace yumehiko.Resident
             transition.OnComplete(() => kuroKoma.enabled = false);
             transition.SetUpdate(true);
             transition.SetLink(gameObject);
+
+            transition = transition.Play();
         }
     }
 }

@@ -4,7 +4,8 @@
         "UniRx",
         "yumehiko.Resident",
         "DOTween.Modules",
-        "UniTask"
+        "UniTask",
+        "UniTask.DOTween"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

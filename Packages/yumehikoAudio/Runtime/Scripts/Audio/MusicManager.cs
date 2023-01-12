@@ -2,6 +2,8 @@
 using DG.Tweening;
 using UniRx;
 using yumehiko.Resident;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace yumehiko.Audio.Music
 {
@@ -48,10 +50,7 @@ namespace yumehiko.Audio.Music
         /// </summary>
         public static bool IsInstalled => combineAudioSource != null;
 
-        private static AudioSource mainSource;
-        private static AudioSource fadeSource;
         private static CombineAudioSource combineAudioSource;
-        private static Sequence crossFadeSequence;
 
         private static readonly Subject<MusicClip> onStartMusic = new Subject<MusicClip>();
         private static readonly Subject<Unit> onStopMusic = new Subject<Unit>();
@@ -59,9 +58,7 @@ namespace yumehiko.Audio.Music
         private static readonly FloatReactiveProperty playTime = new FloatReactiveProperty(0.0f);
         private static CompositeDisposable pauseModeDisposables;
 
-        private static Tween clipLengthTween;
-
-
+        private static Tweener clipLengthTween;
 
         static MusicManager()
         {
@@ -75,8 +72,7 @@ namespace yumehiko.Audio.Music
         public static void InstallSources(CombineAudioSource combineAudioSource)
         {
             MusicManager.combineAudioSource = combineAudioSource;
-            mainSource = combineAudioSource.MainSource;
-            fadeSource = combineAudioSource.FadeSource;
+            _ = onStartMusic.Subscribe(clip => MeasureClipTime(clip));
         }
 
         /// <summary>
@@ -108,14 +104,18 @@ namespace yumehiko.Audio.Music
             }
 
             //BGMが再生中でないなら、フェードなし即時再生。
-            if (!mainSource.isPlaying)
+            if (!combineAudioSource.IsPlaying)
             {
-                InstantSwap(musicClip);
+                CurrentClip = musicClip;
+                onStartMusic.OnNext(musicClip);
+                combineAudioSource.InstantSwap(musicClip);
                 return;
             }
 
             //指定時間かけて、クロスフェードする。
-            CrossFadeSwap(musicClip, duration);
+            CurrentClip = musicClip;
+            onStartMusic.OnNext(musicClip);
+            combineAudioSource.CrossFadeSwap(musicClip, duration).Forget();
         }
 
         /// <summary>
@@ -132,19 +132,7 @@ namespace yumehiko.Audio.Music
 
             onStopMusic.OnNext(Unit.Default);
 
-            clipLengthTween?.Kill();
-            crossFadeSequence?.Kill(true);
-
-            //指定時間かけてフェードアウトして停止。
-            crossFadeSequence = DOTween.Sequence()
-                .Append(mainSource.DOFade(0.0f, fadeOutDuration))
-                .OnComplete(() =>
-                {
-                    mainSource.Stop();
-                    CurrentClip = null;
-                    playTime.Value = 0.0f;
-                });
-
+            combineAudioSource.StopMusic(fadeOutDuration).Forget();
         }
 
         /// <summary>
@@ -158,9 +146,7 @@ namespace yumehiko.Audio.Music
             {
                 return;
             }
-
-            mainSource.loop = doLoop;
-            fadeSource.loop = doLoop;
+            combineAudioSource.SetLoopMode(doLoop);
         }
 
         /// <summary>
@@ -179,97 +165,35 @@ namespace yumehiko.Audio.Music
             if (dependPause)
             {
                 pauseModeDisposables = new CompositeDisposable();
-                _ = PauseManager.IsPause.Where(isPause => isPause).Subscribe(_ => PauseMusic()).AddTo(pauseModeDisposables);
-                _ = PauseManager.IsPause.Where(isPause => !isPause).Subscribe(_ => ResumeMusic()).AddTo(pauseModeDisposables);
+                _ = PauseManager.IsPause
+                    .Subscribe(isPause => SwitchPause(isPause))
+                    .AddTo(pauseModeDisposables);
             }
             else
             {
-                ResumeMusic();
+                SwitchPause(false);
                 pauseModeDisposables?.Dispose();
             }
         }
 
-
-
         /// <summary>
-        /// 一時停止。
+        /// 一時停止を切り替える。
         /// </summary>
-        private static void PauseMusic()
+        private static void SwitchPause(bool isPause)
         {
-            mainSource.pitch = 0.0f;
-            fadeSource.pitch = 0.0f;
-            isPausing.Value = true;
+            combineAudioSource.SwitchPause(isPause);
+            isPausing.Value = isPause;
         }
 
         /// <summary>
-        /// 一時停止を解除。
-        /// </summary>
-        private static void ResumeMusic()
-        {
-            mainSource.pitch = 1.0f;
-            fadeSource.pitch = 1.0f;
-            isPausing.Value = false;
-        }
-
-        /// <summary>
-        /// ふたつのBGMをクロスフェードで切り替える。
-        /// </summary>
-        /// <param name="duration"></param>
-        private static void CrossFadeSwap(MusicClip musicClip, float duration)
-        {
-            ChangeClip(fadeSource, musicClip);
-            onStartMusic.OnNext(musicClip);
-            fadeSource.Play();
-
-            crossFadeSequence?.Complete();
-
-            crossFadeSequence = DOTween.Sequence()
-                .OnStart(() => fadeSource.volume = 0.0f)
-                .Append(fadeSource.DOFade(1.0f, duration))
-                .Join(mainSource.DOFade(0.0f, duration))
-                .OnComplete(() => SwapSource());
-        }
-
-        /// <summary>
-        /// BGM即時切り替え。
+        /// クリップを入れ替えたとき、そのクリップの長さを測る。
         /// </summary>
         /// <param name="musicClip"></param>
-        private static void InstantSwap(MusicClip musicClip)
+        private static void MeasureClipTime(MusicClip musicClip)
         {
-            crossFadeSequence.Kill(true);
-
-            ChangeClip(mainSource, musicClip);
-            onStartMusic.OnNext(musicClip);
-            mainSource.volume = 1.0f;
-            mainSource.Play();
-
-            fadeSource.volume = 0.0f;
-            fadeSource.Stop();
-        }
-
-        /// <summary>
-        /// BGM用のソースを主客転倒する。
-        /// </summary>
-        private static void SwapSource()
-        {
-            AudioSource tempSource = fadeSource;
-            fadeSource = mainSource;
-            mainSource = tempSource;
-            fadeSource.Stop();
-        }
-
-        /// <summary>
-        /// クリップを入れ替えて、そのクリップ再生時間を測り始める。
-        /// </summary>
-        /// <param name="musicClip"></param>
-        private static void ChangeClip(AudioSource targetSource, MusicClip musicClip)
-        {
-            clipLengthTween?.Kill();
-
-            targetSource.clip = musicClip.Clip;
-            CurrentClip = musicClip;
             float length = musicClip.Length;
             playTime.Value = 0.0f;
+            clipLengthTween?.Kill();
 
             clipLengthTween = DOTween.To(() => playTime.Value,
                 num => playTime.Value = num,

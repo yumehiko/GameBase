@@ -14,17 +14,13 @@ namespace yumehiko.Audio.Music
         [SerializeField] private List<MusicClip> clips;
         [SerializeField] private Button nextButton;
         [SerializeField] private Button prevButton;
+        [SerializeField] private Text musicTitleText;
         private int index = 0;
 
         private void Awake()
         {
             nextButton.OnClickAsObservable().Subscribe(_ => PlayNext());
             prevButton.OnClickAsObservable().Subscribe(_ => PlayPrev());
-            _ = Observable.NextFrame().Subscribe(_ =>
-            {
-                MusicManager.PlayMusic(clips[0]);
-                MusicManager.SetLoopMode(true);
-            });
         }
 
         private void PlayNext()
@@ -34,8 +30,9 @@ namespace yumehiko.Audio.Music
             {
                 index = 0;
             }
-
-            MusicManager.PlayMusic(clips[index]);
+            var clip = clips[index];
+            musicTitleText.text = clip.Title;
+            MusicManager.PlayMusic(clip);
         }
 
         private void PlayPrev()
@@ -46,7 +43,9 @@ namespace yumehiko.Audio.Music
                 index = clips.Count - 1;
             }
 
-            MusicManager.PlayMusic(clips[index]);
+            var clip = clips[index];
+            musicTitleText.text = clip.Title;
+            MusicManager.PlayMusic(clip);
         }
     }
 }
