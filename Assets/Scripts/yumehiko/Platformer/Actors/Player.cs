@@ -26,7 +26,7 @@ namespace yumehiko.Platformer.Actors
         private void Awake()
         {
             walk.Initialize();
-            actorAnimation.Initialize(this, walk, walk, walk.Grounded, walk.BodyDirection);
+            actorAnimation.Initialize(this, walk, walk, walk.Foot, walk.BodyDirection);
             interactor.Initialize();
 
             SubscribeKeys();
@@ -100,7 +100,7 @@ namespace yumehiko.Platformer.Actors
                 .Where(_ => !PauseManager.IsPause.Value)
                 .Where(_ => ReactiveInput.OnMove.Value.y <= -0.9f)
                 .Where(isOn => isOn)
-                .Subscribe(_ => walk.Grounded.DownPlatform())
+                .Subscribe(_ => walk.Foot.DownPlatform())
                 .AddTo(this);
 
             ReactiveInput.OnMaru

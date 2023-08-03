@@ -15,15 +15,15 @@ namespace yumehiko.Platformer.Actors.Parts
         [SerializeField] private SkeletonAnimation visual;
         [SerializeField] private ParticleSystem deathParticle;
         [SerializeField] private ActorSoundEffect soundEffect;
-        private IGrounded grounded;
+        private IFoot foot;
         private Sequence groundedSequence;
         private CompositeDisposable disposables;
 
 
-        public void Initialize(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded, IReadOnlyReactiveProperty<ActorDirection> bodyDirection)
+        public void Initialize(IDieable dieable, IMovable movable, IJumpable jumpable, IFoot foot, IReadOnlyReactiveProperty<ActorDirection> bodyDirection)
         {
             //Spine.SkeletonAnimationはAwakeのタイミングでは購読できないので、1フレーム後に回す。
-            Observable.NextFrame().Subscribe(_ => SubscribeEvents(dieable, movable, jumpable, grounded, bodyDirection));
+            Observable.NextFrame().Subscribe(_ => SubscribeEvents(dieable, movable, jumpable, foot, bodyDirection));
         }
 
         public void Dispose()
@@ -33,9 +33,9 @@ namespace yumehiko.Platformer.Actors.Parts
         }
 
 
-        private void SubscribeEvents(IDieable dieable, IMovable movable, IJumpable jumpable, IGrounded grounded, IReadOnlyReactiveProperty<ActorDirection> bodyDirection)
+        private void SubscribeEvents(IDieable dieable, IMovable movable, IJumpable jumpable, IFoot foot, IReadOnlyReactiveProperty<ActorDirection> bodyDirection)
         {
-            this.grounded = grounded;
+            this.foot = foot;
 
             disposables = new CompositeDisposable();
 
@@ -66,9 +66,9 @@ namespace yumehiko.Platformer.Actors.Parts
                 .AddTo(disposables);
 
             //着地時アニメーション。
-            grounded.IsGrounded
+            foot.IsGrounded
                 .Where(_ => !dieable.IsDied.Value)
-                .Subscribe(_ => GroundedAnimation(grounded.FallSpeedOnLastFrame))
+                .Subscribe(_ => GroundedAnimation(foot.FallSpeedOnLastFrame))
                 .AddTo(disposables);
 
             //スケルトンの向き。
@@ -95,7 +95,7 @@ namespace yumehiko.Platformer.Actors.Parts
 
         private void FootStepEvent()
         {
-            if (!grounded.IsGrounded.Value)
+            if (!foot.IsGrounded.Value)
             {
                 return;
             }

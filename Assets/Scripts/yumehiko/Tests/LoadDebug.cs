@@ -2,7 +2,7 @@
 using UnityEngine;
 using yumehiko.Resident;
 
-namespace yumehiko.Debug
+namespace yumehiko.Tests
 {
     public class LoadDebug : MonoBehaviour
     {

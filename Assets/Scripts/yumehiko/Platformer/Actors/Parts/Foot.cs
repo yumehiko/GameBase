@@ -10,7 +10,7 @@ namespace yumehiko.Platformer.Actors.Parts
     /// 足。接地判定を行う。
     /// </summary>
     [Serializable]
-    public class Foot : IGrounded, IDisposable
+    public class Foot : IFoot, IDisposable
     {
         [SerializeField] private Rigidbody2D body;
         [SerializeField] private Collider2D checkCollider;

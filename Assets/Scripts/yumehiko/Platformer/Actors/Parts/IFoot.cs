@@ -5,7 +5,7 @@ namespace yumehiko.Platformer.Actors.Parts
     /// <summary>
     /// 接地判定。
     /// </summary>
-    public interface IGrounded
+    public interface IFoot
     {
         IReadOnlyReactiveProperty<bool> IsGrounded { get; }
         float FallSpeedOnLastFrame { get; }

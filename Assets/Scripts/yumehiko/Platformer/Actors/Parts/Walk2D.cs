@@ -15,7 +15,7 @@ namespace yumehiko.Platformer.Actors.Parts
         public IObservable<Unit> OnJump => onJump;
         public IObservable<Unit> OnFallWhileJump => onFallWhileJump;
         public IReadOnlyReactiveProperty<ActorDirection> BodyDirection => bodyDirection;
-        public IGrounded Grounded => foot;
+        public IFoot Foot => foot;
         public MovePlatformRider MovePlatformRider => movePlatformRider;
 
 
